@@ -5,6 +5,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.*;
 
+import java.nio.file.Path;
+import java.util.Map;
+
 public class WindowTreeView {
 
     public VBox VBoxHomeWindow;
@@ -26,10 +29,7 @@ public class WindowTreeView {
 
         addTestItems();
     }
-
     private void initializeList() {
-
-
 
     }
 
@@ -57,6 +57,10 @@ public class WindowTreeView {
         treeView.getRoot().getChildren().get(2).getChildren().add(Category4);
 
 
+    }
+
+    public void updateView(Map<Path, Path> map){
+        System.out.println("jhbjvshbvdjsdhbvjshbv");
     }
 
 }

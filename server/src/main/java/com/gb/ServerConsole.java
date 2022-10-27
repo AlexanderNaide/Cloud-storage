@@ -1,13 +1,10 @@
 package com.gb;
 
-import com.gb.classes.Catalog;
-import com.gb.classes.File;
+import com.gb.classes.command.Catalog;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
 
 public class ServerConsole {
     public static void main(String[] args) throws IOException {
@@ -17,20 +14,25 @@ public class ServerConsole {
 //        Files.createDirectory(home);
 
         Catalog catalog = new Catalog();
+        final Path[] path = new Path[1];
 
         Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                catalog.add(new File(dir.getFileName().toString(), true, dir.toString()), new File(dir.getFileName().toString(), true, dir.toString()));
-                System.out.println("File - " + dir.getFileName() + "; address - " + dir);
+                catalog.add(dir, path[0]);
+                path[0] = dir;
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                System.out.println("File - " + file.getFileName() + "; address - " + file);
+                catalog.add(file, path[0]);
                 return FileVisitResult.CONTINUE;
             }
+        });
+
+        catalog.getCatalog().forEach((k, v) -> {
+            System.out.println(k + " лежит в " + v);
         });
 
     }

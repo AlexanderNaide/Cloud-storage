@@ -1,6 +1,7 @@
 package com.gb;
 
 import com.gb.handlers.CloudServerHandler;
+import com.gb.handlers.CloudServerHandlerRadCommand;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -32,9 +33,10 @@ public class ServerStart /*implements Runnable*/ {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel socketChannel) throws Exception{
                             socketChannel.pipeline().addLast(
-                                    new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
+//                                    new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new CloudServerHandler()
+                                    new CloudServerHandlerRadCommand()
                             );
                         }
                     })
