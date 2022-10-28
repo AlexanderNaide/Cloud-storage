@@ -2,9 +2,11 @@ package com.gb.controllers;
 
 import com.gb.classes.command.Catalog;
 import com.gb.classes.Command;
+import com.gb.classes.command.TestCommand;
 import com.gb.classes.command.UpdateCatalog;
 import com.gb.net.Net;
 import com.gb.views.WindowTreeView;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -12,6 +14,7 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.util.Collections;
 import java.util.ResourceBundle;
 
 public class CloudWindowController implements Initializable {
@@ -53,7 +56,9 @@ public class CloudWindowController implements Initializable {
         if (com instanceof UpdateCatalog){
             System.out.println(com.getName());
         } else if (com instanceof Catalog){
+
             System.out.println(com.getClass());
+            System.out.println(((Catalog) com).getCatalog().toString());
             treeView.updateView(((Catalog) com).getCatalog());
         }
 /*        Platform.runLater(() -> {
@@ -69,4 +74,13 @@ public class CloudWindowController implements Initializable {
     }
 
 
+    public void TestButton (ActionEvent actionEvent) {
+        TestCommand tc = new TestCommand();
+        net.sendMessages(tc);
+    }
+
+    public void UpdateList(ActionEvent actionEvent) {
+        UpdateCatalog uc = new UpdateCatalog();
+        net.sendMessages(uc);
+    }
 }

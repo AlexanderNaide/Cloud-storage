@@ -61,10 +61,10 @@ public class Net {
     private void readMessages() {
         try {
             while (true) {
-                System.out.println("А readMessages вщщбще запустилось?");
+                System.out.println("А readMessages вообще запустилось?");
                 Command com = (Command) odis.readObject();
                 System.out.println("Что-то прошло");
-                System.out.println(com.getName());
+                System.out.println(com.getClass());
                 callback.onReceive(com);
             }
         } catch (Exception e) {

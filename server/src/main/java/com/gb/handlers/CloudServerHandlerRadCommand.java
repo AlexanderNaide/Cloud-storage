@@ -3,11 +3,13 @@ package com.gb.handlers;
 import com.gb.classes.MyMessage;
 import com.gb.classes.command.Catalog;
 import com.gb.classes.Command;
+import com.gb.classes.command.TestCommand;
 import com.gb.classes.command.UpdateCatalog;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -29,6 +31,15 @@ public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
                 if (msg instanceof UpdateCatalog){
                     System.out.println("Клент хочет обновить каталог: ");
                     Catalog answer = createCatalog(ctx);
+//                    Catalog answer = createTestCatalog(ctx);
+//                    System.out.println("Новый каталог: " + answer.getClass());
+//                    Catalog answer = new Catalog();
+//                    createTestCatalog(ctx, answer);
+                    ctx.write(answer);
+                    System.out.println("Каталог отправлен");
+                } else if (msg instanceof TestCommand) {
+                    System.out.println("Пришло тест.");
+                    TestCommand answer = new TestCommand();
                     ctx.write(answer);
                 }
 
@@ -45,6 +56,12 @@ public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
         }
     }
 
+/*    private void createTestCatalog(ChannelHandlerContext ctx, Catalog cat) {
+
+        cat.add(new File("server/2.txt"), new File("server"));
+        System.out.println("Тест каталог создан");
+    }*/
+
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
@@ -59,17 +76,11 @@ public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
     private Catalog createCatalog(ChannelHandlerContext ctx) throws IOException {
         Path home = Paths.get( "root/" + "user1");
         Catalog catalog = new Catalog();
-        final Path[] path = new Path[1];
+//        final File[] path = new File[1];
         Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                catalog.add(dir, path[0]);
-                path[0] = dir;
-                return FileVisitResult.CONTINUE;
-            }
-            @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                catalog.add(file, path[0]);
+                catalog.add(file);
                 return FileVisitResult.CONTINUE;
             }
         });
