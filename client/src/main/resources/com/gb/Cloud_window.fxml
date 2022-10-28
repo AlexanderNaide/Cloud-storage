@@ -13,6 +13,8 @@
            <buttons>
              <Button mnemonicParsing="false" onAction="#UpdateList" text="Update list" />
                <Button mnemonicParsing="false" onAction="#TestButton" text="Test" />
+               <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#TestButton" text="Add File" />
+               <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#AddDirectory" text="Add Dir" />
            </buttons>
             <padding>
                <Insets left="5.0" right="5.0" />

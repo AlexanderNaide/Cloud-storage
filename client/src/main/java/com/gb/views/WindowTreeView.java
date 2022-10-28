@@ -35,40 +35,12 @@ public class WindowTreeView {
 
         initializeList();
 
-        addTestItems();
-
 //        Button btn = new Button("Test");
 //        this.VBoxHomeWindow.getChildren().add(btn);
 //        VBox.setVgrow(btn, Priority.ALWAYS);
 //        btn.setOnAction(ActionEvent event);
     }
     private void initializeList() {
-
-    }
-
-    private void addTestItems() {
-
-        TreeItem<String> Category1 = new TreeItem<>("Category 1");
-        treeView.getRoot().getChildren().add(Category1);
-        TreeItem<String> Category2 = new TreeItem<>("Category 2");
-        treeView.getRoot().getChildren().add(Category2);
-        TreeItem<String> Category3 = new TreeItem<>("Category 3");
-        treeView.getRoot().getChildren().add(Category3);
-
-        treeView.getRoot().getChildren().get(0).getChildren().add(new TreeItem<>("File 1"));
-        treeView.getRoot().getChildren().get(0).getChildren().add(new TreeItem<>("File 2"));
-        treeView.getRoot().getChildren().get(0).getChildren().add(new TreeItem<>("File 3"));
-
-        treeView.getRoot().getChildren().get(1).getChildren().add(new TreeItem<>("File 1"));
-        treeView.getRoot().getChildren().get(1).getChildren().add(new TreeItem<>("File 2"));
-
-        treeView.getRoot().getChildren().get(2).getChildren().add(new TreeItem<>("File 1"));
-        treeView.getRoot().getChildren().get(2).getChildren().add(new TreeItem<>("File 2"));
-        TreeItem<String> Category4 = new TreeItem<>("Category 4");
-        Category4.getChildren().add(new TreeItem<>("File 1"));
-        Category4.getChildren().add(new TreeItem<>("File 2"));
-        treeView.getRoot().getChildren().get(2).getChildren().add(Category4);
-
 
     }
 
@@ -109,6 +81,12 @@ public class WindowTreeView {
         });
 
 
+    }
+
+    public String getParentItem(ActionEvent actionEvent){
+        String s = treeView.getFocusModel().getFocusedItem().getValue();
+
+        return s;
     }
 
 }

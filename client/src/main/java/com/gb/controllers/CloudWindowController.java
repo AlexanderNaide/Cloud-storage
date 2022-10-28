@@ -33,18 +33,8 @@ public class CloudWindowController implements Initializable {
             Socket socket = new Socket("localhost", 6830);
             net = new Net(this::readCommand, socket);
 
-
-            Thread t = new Thread(() -> {
-                try {
-                    Thread.sleep(5000);
-                    Command c = new UpdateCatalog();
-                    net.sendMessages(c);
-
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            t.start();
+            Command c = new UpdateCatalog();
+            net.sendMessages(c);
 
 
         } catch (IOException e){
@@ -82,5 +72,10 @@ public class CloudWindowController implements Initializable {
     public void UpdateList(ActionEvent actionEvent) {
         UpdateCatalog uc = new UpdateCatalog();
         net.sendMessages(uc);
+    }
+
+    public void AddDirectory(ActionEvent actionEvent) {
+        String parent = treeView.getParentItem(actionEvent);
+        System.out.println(parent);
     }
 }
