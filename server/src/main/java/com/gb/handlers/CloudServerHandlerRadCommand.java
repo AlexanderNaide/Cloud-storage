@@ -1,5 +1,6 @@
 package com.gb.handlers;
 
+import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyMessage;
 import com.gb.classes.command.Catalog;
 import com.gb.classes.Command;
@@ -29,8 +30,14 @@ public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
 //            System.out.println(msg.getClass());
             if (msg instanceof Command){
                 if (msg instanceof UpdateCatalog){
-                    System.out.println("Клент хочет обновить каталог: ");
+                    System.out.println("Клент " + ctx.channel().id() + " хочет обновить каталог: ");
+
+                    /**    Вот это работает *******
                     Catalog answer = createCatalog(ctx);
+                     */
+
+                    Command answer = new MyDirectory(Paths.get("Root/user1").toFile());
+
 //                    Catalog answer = createTestCatalog(ctx);
 //                    System.out.println("Новый каталог: " + answer.getClass());
 //                    Catalog answer = new Catalog();

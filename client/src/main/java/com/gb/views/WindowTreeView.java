@@ -1,5 +1,6 @@
 package com.gb.views;
 
+import com.gb.classes.MyDir.MyDirectory;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -179,4 +180,24 @@ public class WindowTreeView {
         return s;
     }
 
+    public void updateViewNew(MyDirectory md) {
+
+        ObservableList<TreeItem<String>> userCatalog = treeView.getRoot().getChildren();
+        ObservableList<TreeItem<String>> userCatalogCopy = userCatalog;
+        userCatalog.remove(0, userCatalog.size());
+        userCatalog.addAll(updateViewCat(md).getChildren());
+    }
+
+    public TreeItem<String> updateViewCat(MyDirectory md) {
+        TreeItem<String> item = new TreeItem<>(md.getCatalog().getName(), new ImageView(ico.getCat()));
+        md.readDirectory((d) -> {
+            for (File file : d.getFiles()) {
+                item.getChildren().add(new TreeItem<>(file.getName(), new ImageView(ico.getFile())));
+            }
+            for (MyDirectory myDirectory : d.getDirectories()) {
+                item.getChildren().add(updateViewCat(myDirectory));
+            }
+        });
+        return item;
+    }
 }

@@ -1,14 +1,18 @@
 package com.gb;
 
+import com.gb.classes.MyDir.Callback;
+import com.gb.classes.MyDir.MyDirectory;
+import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.Catalog;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 
 public class ServerConsole {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NotDirectoryException {
         Path root = Paths.get("Root");
 //        Files.createDirectory(root);
         Path home = Paths.get(root + "/" + "user1");
@@ -35,6 +39,23 @@ public class ServerConsole {
                 System.out.println(path1.getName(i));
             }*/
         });
+
+        System.out.println("*************************************");
+
+
+        MyDirectory md = new MyDirectory(home.toFile());
+
+/*        md.readDirectory((d, c) -> {
+            System.out.println("name - " + d.getCatalog().getName());
+
+            for (File file : d.getFiles()) {
+                System.out.println(file.getName());
+            }
+
+            for (MyDirectory myDirectory : d.getDirectories()) {
+                c.runD(myDirectory, c);
+            }
+        });*/
 
     }
 }

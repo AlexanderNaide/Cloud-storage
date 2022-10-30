@@ -1,5 +1,6 @@
 package com.gb.controllers;
 
+import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.command.Catalog;
 import com.gb.classes.Command;
 import com.gb.classes.command.TestCommand;
@@ -50,6 +51,9 @@ public class CloudWindowController implements Initializable {
             System.out.println(com.getClass());
             System.out.println(((Catalog) com).getCatalog().toString());
             treeView.updateView(((Catalog) com).getCatalog());
+        } else if (com instanceof MyDirectory){
+
+            treeView.updateViewNew((MyDirectory) com);
         }
 /*        Platform.runLater(() -> {
             statuses.getItems().add(message);
