@@ -78,6 +78,16 @@ public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
         Catalog catalog = new Catalog();
 //        final File[] path = new File[1];
         Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
+
+
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                if (!dir.getFileName().toString().equals("user1")){
+                    catalog.add(dir);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 catalog.add(file);
