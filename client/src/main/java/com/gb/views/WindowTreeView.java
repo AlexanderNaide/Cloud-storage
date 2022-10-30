@@ -190,14 +190,12 @@ public class WindowTreeView {
 
     public TreeItem<String> updateViewCat(MyDirectory md) {
         TreeItem<String> item = new TreeItem<>(md.getCatalog().getName(), new ImageView(ico.getCat()));
-        md.readDirectory((d) -> {
-            for (File file : d.getFiles()) {
+            for (File file : md.getFiles()) {
                 item.getChildren().add(new TreeItem<>(file.getName(), new ImageView(ico.getFile())));
             }
-            for (MyDirectory myDirectory : d.getDirectories()) {
+            for (MyDirectory myDirectory : md.getDirectories()) {
                 item.getChildren().add(updateViewCat(myDirectory));
             }
-        });
         return item;
     }
 }

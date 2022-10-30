@@ -1,15 +1,12 @@
 package com.gb;
 
-import com.gb.classes.MyDir.Callback;
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.Catalog;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 
 public class ServerConsole {
     public static void main(String[] args) throws IOException, NotDirectoryException {

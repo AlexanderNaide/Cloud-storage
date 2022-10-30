@@ -47,8 +47,4 @@ public class MyDirectory extends Command {
             throw new NotDirectoryException();
         }
     }
-
-    public void readDirectory(Callback callback){
-        callback.runD(this);
-    }
 }
