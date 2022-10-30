@@ -3,16 +3,14 @@ package com.gb.views;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-import java.beans.EventHandler;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class WindowTreeView {
 
@@ -22,6 +20,8 @@ public class WindowTreeView {
 
     private LinkedList<File> list;
 
+    private IconVer1 ico;
+
 
     public WindowTreeView (VBox VBoxHomeWindow){
         this.VBoxHomeWindow = VBoxHomeWindow;
@@ -29,7 +29,8 @@ public class WindowTreeView {
         this.VBoxHomeWindow.getChildren().add(treeView);
         VBox.setVgrow(treeView, Priority.ALWAYS);
         treeView.setPadding(new Insets(5.0));
-        root = new TreeItem<>("Home");
+        ico = new IconVer1();
+        root = new TreeItem<>("Home", new ImageView(ico.getHome()));
         treeView.setRoot(root);
         root.setExpanded(true);
 
@@ -51,7 +52,65 @@ public class WindowTreeView {
 
         list.forEach((f) -> {
 
+
+
             if(f.isDirectory()){
+//                TreeItem<String> item = new TreeItem<>(f.getName());
+                Path path = f.toPath();
+                TreeItem<String> parentCat = treeView.getRoot();
+                for (int i = 2; i < path.getNameCount(); i++) {
+                    String catName = path.getName(i).toString();
+                    System.out.println("Че там прочитали: " + catName);
+//                    TreeItem<String> cat = null;
+                    boolean isEmpty = false;
+                    for (TreeItem<String> treeItem : parentCat.getChildren()) {
+                        if (treeItem.getValue().equals(catName)){
+                            System.out.println("Есть совпадение");
+//                            cat = treeItem;
+                            isEmpty= true;
+                            parentCat = treeItem;
+                            break;
+                        }
+                    }
+                    if (!isEmpty){
+                        TreeItem<String> newCat = new TreeItem<>(catName, new ImageView(ico.getCat()));
+                        parentCat.getChildren().add(newCat);
+                        parentCat = newCat;
+                    }
+                }
+            } else {
+                TreeItem<String> item = new TreeItem<>(f.getName(), new ImageView(ico.getFile()));
+                Path path = f.toPath();
+                TreeItem<String> parentCat = treeView.getRoot();
+                for (int i = 2; i < path.getNameCount()-1; i++) {
+                    String catName = path.getName(i).toString();
+                    System.out.println("Че там прочитали: " + catName);
+                    TreeItem<String> cat = null;
+                    for (TreeItem<String> treeItem : parentCat.getChildren()) {
+                        System.out.println("Вот это ----> " + treeItem.getValue());
+                        if (treeItem.getValue().equals(catName)){
+                            System.out.println("Есть совпадение");
+                            cat = treeItem;
+                            parentCat = treeItem;
+                            break;
+                        }
+                    }
+                    if (cat == null){
+                        TreeItem<String> newCat = new TreeItem<>(catName);
+                        parentCat.getChildren().add(newCat);
+                        parentCat = newCat;
+                    }
+
+                }
+                assert parentCat != null;
+                parentCat.getChildren().add(item);
+                System.out.println("Добавляем " + item + " в " + parentCat);
+            }
+
+
+ /*
+
+                if(f.isDirectory()){
 //                TreeItem<String> item = new TreeItem<>(f.getName());
                 Path path = f.toPath();
                 TreeItem<String> parentCat = treeView.getRoot();
@@ -108,62 +167,7 @@ public class WindowTreeView {
                 System.out.println("Добавляем " + item + " в " + parentCat);
             }
 
-
-
- /*           if(f.isDirectory()){
-//                TreeItem<String> item = new TreeItem<>(f.getName());
-                Path path = f.toPath();
-                TreeItem<String> parentCat = treeView.getRoot();
-                for (int i = 2; i < path.getNameCount(); i++) {
-                    String catName = path.getName(i).toString();
-                    System.out.println("Че там прочитали: " + catName);
-//                    TreeItem<String> cat = null;
-                    boolean isEmpty = false;
-                    for (TreeItem<String> treeItem : parentCat.getChildren()) {
-                        if (treeItem.toString().equals(catName)){
-                            System.out.println("Есть совпадение");
-//                            cat = treeItem;
-                            isEmpty= true;
-                            parentCat = treeItem;
-                            break;
-                        }
-                    }
-                    if (!isEmpty){
-                        TreeItem<String> newCat = new TreeItem<>(catName);
-                        parentCat.getChildren().add(newCat);
-                        parentCat = newCat;
-                    }
-                }
-            } else {
-                TreeItem<String> item = new TreeItem<>(f.getName());
-                Path path = f.toPath();
-                TreeItem<String> parentCat = null;
-                for (int i = 1; i < path.getNameCount()-1; i++) {
-                    if (i == 1){
-                        parentCat = treeView.getRoot();
-                        continue;
-                    }
-                    String catName = path.getName(i).toString();
-                    System.out.println("Че там прочитали: " + catName);
-                    TreeItem<String> cat = null;
-                    for (TreeItem<String> treeItem : parentCat.getChildren()) {
-                        if (treeItem.toString().equals(catName)){
-                            System.out.println("Есть совпадение");
-                            cat = treeItem;
-                            break;
-                        }
-                    }
-                    if (cat == null){
-                        TreeItem<String> newCat = new TreeItem<>(catName);
-                        parentCat.getChildren().add(newCat);
-                        parentCat = newCat;
-                    }
-
-                }
-                assert parentCat != null;
-                parentCat.getChildren().add(item);
-                System.out.println("Добавляем " + item + " в " + parentCat);
-            }*/
+            */
         });
 
 
