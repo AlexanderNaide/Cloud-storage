@@ -47,12 +47,8 @@ public class CloudWindowController implements Initializable {
         if (com instanceof UpdateCatalog){
             System.out.println(com.getName());
         } else if (com instanceof Catalog){
-
-            System.out.println(com.getClass());
-            System.out.println(((Catalog) com).getCatalog().toString());
-            treeView.updateView(((Catalog) com).getCatalog());
+//            treeView.updateView(((Catalog) com).getCatalog());
         } else if (com instanceof MyDirectory){
-
             treeView.updateViewNew((MyDirectory) com);
         }
 /*        Platform.runLater(() -> {

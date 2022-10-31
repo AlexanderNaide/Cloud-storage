@@ -16,22 +16,26 @@ import java.util.LinkedList;
 public class WindowTreeView {
 
     public VBox VBoxHomeWindow;
-    private final TreeView <String> treeView;
-    TreeItem<String> root;
+//    private final TreeView <String> treeView;
+    private final TreeView <UserItem> treeView;
+    TreeItem<UserItem> root;
 
     private LinkedList<File> list;
 
-    private IconVer1 ico;
+    private Ico ico;
 
 
     public WindowTreeView (VBox VBoxHomeWindow){
         this.VBoxHomeWindow = VBoxHomeWindow;
-        treeView = new TreeView<String>();
+//        treeView = new TreeView<String>();
+        treeView = new TreeView<UserItem>();
         this.VBoxHomeWindow.getChildren().add(treeView);
         VBox.setVgrow(treeView, Priority.ALWAYS);
         treeView.setPadding(new Insets(5.0));
         ico = new IconVer1();
-        root = new TreeItem<>("Home", new ImageView(ico.getHome()));
+//        root = new TreeItem<>("Home", new ImageView(ico.getIco("home")));
+        UserItem rootItem = new UserItem(new File("Home"), true);
+        root = new TreeItem<>(rootItem, new ImageView(ico.getIco("home")));
         treeView.setRoot(root);
         root.setExpanded(true);
 
@@ -46,7 +50,7 @@ public class WindowTreeView {
 
     }
 
-    public void updateView(LinkedList<File> newList){
+/*    public void updateView(LinkedList<File> newList){
         this.list = newList;
         ObservableList<TreeItem<String>> userCatalog = treeView.getRoot().getChildren();
         userCatalog.remove(0, userCatalog.size());
@@ -74,13 +78,13 @@ public class WindowTreeView {
                         }
                     }
                     if (!isEmpty){
-                        TreeItem<String> newCat = new TreeItem<>(catName, new ImageView(ico.getCat()));
+                        TreeItem<String> newCat = new TreeItem<>(catName, new ImageView(ico.getIco("cat")));
                         parentCat.getChildren().add(newCat);
                         parentCat = newCat;
                     }
                 }
             } else {
-                TreeItem<String> item = new TreeItem<>(f.getName(), new ImageView(ico.getFile()));
+                TreeItem<String> item = new TreeItem<>(f.getName(), new ImageView(ico.getIco("file")));
                 Path path = f.toPath();
                 TreeItem<String> parentCat = treeView.getRoot();
                 for (int i = 2; i < path.getNameCount()-1; i++) {
@@ -107,102 +111,43 @@ public class WindowTreeView {
                 parentCat.getChildren().add(item);
                 System.out.println("Добавляем " + item + " в " + parentCat);
             }
-
-
- /*
-
-                if(f.isDirectory()){
-//                TreeItem<String> item = new TreeItem<>(f.getName());
-                Path path = f.toPath();
-                TreeItem<String> parentCat = treeView.getRoot();
-                for (int i = 2; i < path.getNameCount(); i++) {
-                    String catName = path.getName(i).toString();
-                    System.out.println("Че там прочитали: " + catName);
-//                    TreeItem<String> cat = null;
-                    boolean isEmpty = false;
-                    for (TreeItem<String> treeItem : parentCat.getChildren()) {
-                        if (treeItem.getValue().equals(catName)){
-                            System.out.println("Есть совпадение");
-//                            cat = treeItem;
-                            isEmpty= true;
-                            parentCat = treeItem;
-                            break;
-                        }
-                    }
-                    if (!isEmpty){
-                        TreeItem<String> newCat = new TreeItem<>(catName);
-                        parentCat.getChildren().add(newCat);
-                        parentCat = newCat;
-                    }
-                }
-            } else {
-                TreeItem<String> item = new TreeItem<>(f.getName());
-                Path path = f.toPath();
-                TreeItem<String> parentCat = null;
-                for (int i = 1; i < path.getNameCount()-1; i++) {
-                    if (i == 1){
-                        parentCat = treeView.getRoot();
-                        continue;
-                    }
-                    String catName = path.getName(i).toString();
-                    System.out.println("Че там прочитали: " + catName);
-                    TreeItem<String> cat = null;
-                    for (TreeItem<String> treeItem : parentCat.getChildren()) {
-                        System.out.println("Вот это ----> " + treeItem.getValue());
-                        if (treeItem.getValue().equals(catName)){
-                            System.out.println("Есть совпадение");
-                            cat = treeItem;
-                            parentCat = treeItem;
-                            break;
-                        }
-                    }
-                    if (cat == null){
-                        TreeItem<String> newCat = new TreeItem<>(catName);
-                        parentCat.getChildren().add(newCat);
-                        parentCat = newCat;
-                    }
-
-                }
-                assert parentCat != null;
-                parentCat.getChildren().add(item);
-                System.out.println("Добавляем " + item + " в " + parentCat);
-            }
-
-            */
         });
 
 
-    }
+    }*/
 
     public String getParentItem(ActionEvent actionEvent){
-        String s = treeView.getFocusModel().getFocusedItem().getValue();
-
-        return s;
+        UserItem item = treeView.getFocusModel().getFocusedItem().getValue();
+        if (item.isDir()){
+            return item.toString();
+        } else {
+            return treeView.getFocusModel().getFocusedItem().getParent().getValue().toString();
+        }
     }
 
     public void updateViewNew(MyDirectory md) {
-        TreeItem<String> newUserCatalog = new TreeItem<>();
+        TreeItem<UserItem> newUserCatalog = new TreeItem<>();
         newUserCatalog.getChildren().addAll(updateViewCat(md).getChildren());
         updateExpanded(newUserCatalog.getChildren(), treeView.getRoot().getChildren());
         treeView.getRoot().getChildren().clear();
         treeView.getRoot().getChildren().addAll(newUserCatalog.getChildren());
     }
 
-    public TreeItem<String> updateViewCat(MyDirectory md) {
-        TreeItem<String> item = new TreeItem<>(md.getCatalog().getName(), new ImageView(ico.getCat()));
-            for (File file : md.getFiles()) {
-                item.getChildren().add(new TreeItem<>(file.getName(), new ImageView(ico.getFile())));
-            }
-            for (MyDirectory myDirectory : md.getDirectories()) {
-                item.getChildren().add(updateViewCat(myDirectory));
-            }
+    public TreeItem<UserItem> updateViewCat(MyDirectory md) {
+        TreeItem<UserItem> item = new TreeItem<>(new UserItem(md.getCatalog(), true), new ImageView(ico.getIco("cat")));
+        for (File file : md.getFiles()) {
+            item.getChildren().add(new TreeItem<>(new UserItem(file, false), new ImageView(ico.getIco("file"))));
+        }
+        for (MyDirectory myDirectory : md.getDirectories()) {
+            item.getChildren().add(updateViewCat(myDirectory));
+        }
         return item;
     }
 
-    public void updateExpanded(ObservableList<TreeItem<String>> newCatalog, ObservableList<TreeItem<String>> oldCatalog) {
-        for (TreeItem<String> oldItem : oldCatalog) {
-            for (TreeItem<String> item : newCatalog) {
-                if (item.getValue().equals(oldItem.getValue())){
+    public void updateExpanded(ObservableList<TreeItem<UserItem>> newCatalog, ObservableList<TreeItem<UserItem>> oldCatalog) {
+        for (TreeItem<UserItem> oldItem : oldCatalog) {
+            for (TreeItem<UserItem> item : newCatalog) {
+                if (item.getValue().toString().equals(oldItem.getValue().toString())){
                     item.setExpanded(oldItem.isExpanded());
                     if (oldItem.getChildren() != null && item.getChildren() != null){
                         updateExpanded(item.getChildren(), oldItem.getChildren());
