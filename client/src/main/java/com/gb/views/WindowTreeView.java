@@ -4,8 +4,7 @@ import com.gb.classes.MyDir.MyDirectory;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
@@ -118,7 +117,9 @@ public class WindowTreeView {
 
     public String getParentItem(ActionEvent actionEvent){
         UserItem item = treeView.getFocusModel().getFocusedItem().getValue();
-        if (item.isDir()){
+        if (item == null){
+            return treeView.getRoot().getValue().toString();
+        } else if (item.isDir()){
             return item.toString();
         } else {
             return treeView.getFocusModel().getFocusedItem().getParent().getValue().toString();
