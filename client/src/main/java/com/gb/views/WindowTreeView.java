@@ -181,11 +181,11 @@ public class WindowTreeView {
     }
 
     public void updateViewNew(MyDirectory md) {
-
-        ObservableList<TreeItem<String>> userCatalog = treeView.getRoot().getChildren();
-        ObservableList<TreeItem<String>> userCatalogCopy = userCatalog;
-        userCatalog.remove(0, userCatalog.size());
-        userCatalog.addAll(updateViewCat(md).getChildren());
+        TreeItem<String> newUserCatalog = new TreeItem<>();
+        newUserCatalog.getChildren().addAll(updateViewCat(md).getChildren());
+        updateExpanded(newUserCatalog.getChildren(), treeView.getRoot().getChildren());
+        treeView.getRoot().getChildren().clear();
+        treeView.getRoot().getChildren().addAll(newUserCatalog.getChildren());
     }
 
     public TreeItem<String> updateViewCat(MyDirectory md) {
@@ -197,5 +197,18 @@ public class WindowTreeView {
                 item.getChildren().add(updateViewCat(myDirectory));
             }
         return item;
+    }
+
+    public void updateExpanded(ObservableList<TreeItem<String>> newCatalog, ObservableList<TreeItem<String>> oldCatalog) {
+        for (TreeItem<String> oldItem : oldCatalog) {
+            for (TreeItem<String> item : newCatalog) {
+                if (item.getValue().equals(oldItem.getValue())){
+                    item.setExpanded(oldItem.isExpanded());
+                    if (oldItem.getChildren() != null && item.getChildren() != null){
+                        updateExpanded(item.getChildren(), oldItem.getChildren());
+                    }
+                }
+            }
+        }
     }
 }
