@@ -7,28 +7,32 @@ import com.gb.classes.command.TestCommand;
 import com.gb.classes.command.UpdateCatalog;
 import com.gb.net.Net;
 import com.gb.views.WindowTreeView;
+import com.gb.views.WindowTreeViewOthver;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
-import java.util.Collections;
 import java.util.ResourceBundle;
 
 public class CloudWindowController implements Initializable {
     public VBox VBoxHomeWindow;
     public AnchorPane HomeWindow;
 
-    public WindowTreeView treeView;
+    public WindowTreeViewOthver treeView;
+    public TextField interText;
 
     private Net net;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        treeView = new WindowTreeView(VBoxHomeWindow);
+//        treeView = new WindowTreeView(VBoxHomeWindow);
+        treeView = new WindowTreeViewOthver(VBoxHomeWindow);
 
         try {
             Socket socket = new Socket("localhost", 6830);
@@ -49,7 +53,7 @@ public class CloudWindowController implements Initializable {
         } else if (com instanceof Catalog){
 //            treeView.updateView(((Catalog) com).getCatalog());
         } else if (com instanceof MyDirectory){
-            treeView.updateViewNew((MyDirectory) com);
+//            treeView.updateViewNew((MyDirectory) com);
         }
 /*        Platform.runLater(() -> {
             statuses.getItems().add(message);
@@ -75,7 +79,14 @@ public class CloudWindowController implements Initializable {
     }
 
     public void AddDirectory(ActionEvent actionEvent) {
-        String parent = treeView.getParentItem(actionEvent);
-        System.out.println(parent);
+
+        treeView.setEditing(actionEvent);
+//        interText.setVisible(true);
+//        File file = treeView.getParentItem(actionEvent);
+//        System.out.println(file.getName());
+    }
+
+
+    public void TextInsered(ActionEvent actionEvent) {
     }
 }

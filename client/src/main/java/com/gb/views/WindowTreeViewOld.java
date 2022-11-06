@@ -1,23 +1,21 @@
 package com.gb.views;
 
 import com.gb.classes.MyDir.MyDirectory;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.util.Callback;
-import javafx.util.Duration;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.util.LinkedList;
 
-public class WindowTreeView {
+public class WindowTreeViewOld {
 
     public VBox VBoxHomeWindow;
 //    private final TreeView <String> treeView;
@@ -26,12 +24,10 @@ public class WindowTreeView {
 
     private LinkedList<File> list;
 
-    private final Ico ico;
-
-    private MyDirectory md;
+    private Ico ico;
 
 
-    public WindowTreeView (VBox VBoxHomeWindow){
+    public WindowTreeViewOld(VBox VBoxHomeWindow){
         this.VBoxHomeWindow = VBoxHomeWindow;
 //        treeView = new TreeView<String>();
         treeView = new TreeView<UserItem>();
@@ -156,7 +152,6 @@ public class WindowTreeView {
         treeView.setEditable(true);
         treeView.requestFocus();
 //        treeView.layout();
-        System.out.println(treeView.isEditable());
         treeView.getSelectionModel().select(newItem);
         treeView.edit(newItem);
 
@@ -177,8 +172,7 @@ public class WindowTreeView {
 
     }
 
-    public void updateViewNew(MyDirectory myDirectory) {
-        md = myDirectory;
+    public void updateViewNew(MyDirectory md) {
         TreeItem<UserItem> newUserCatalog = new TreeItem<>();
         newUserCatalog.getChildren().addAll(updateViewCat(md).getChildren());
         updateExpanded(newUserCatalog.getChildren(), treeView.getRoot().getChildren());
