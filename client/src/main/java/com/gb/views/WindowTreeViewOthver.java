@@ -109,7 +109,7 @@ public class WindowTreeViewOthver {
 
         public RenameM() {
             MenuItem renameItem = new MenuItem("Rename");
-            yyy.getItems().add(renameItem);
+
             renameItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent arg0) {
@@ -124,8 +124,6 @@ public class WindowTreeViewOthver {
             if (item == null || empty) {
                 setGraphic(null);
                 setText(null);
-            } else {
-                yyy = item;
             }
         }
     }

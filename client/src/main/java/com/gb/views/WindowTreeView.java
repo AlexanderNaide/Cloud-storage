@@ -8,11 +8,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -46,14 +48,22 @@ public class WindowTreeView {
         treeView.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
             updateImageForExpanded(treeView.getRoot().getChildren());
         });
+        treeView.setCellFactory(param -> new TextFieldTreeCell<UserItem>(new StringConverter<UserItem>() {
+            @Override
+            public String toString(UserItem object) {
+                return object.toString();
+            }
+
+            @Override
+            public UserItem fromString(String string) {
+                updateImageForExpanded(treeView.getRoot().getChildren());
+                treeView.requestFocus();
+                return new UserItem(new File(string), true);
+            }
+        }));
         root.setExpanded(true);
 
         initializeList();
-
-//        Button btn = new Button("Test");
-//        this.VBoxHomeWindow.getChildren().add(btn);
-//        VBox.setVgrow(btn, Priority.ALWAYS);
-//        btn.setOnAction(ActionEvent event);
     }
     private void initializeList() {
 
@@ -125,56 +135,27 @@ public class WindowTreeView {
 
     }*/
 
-    public File getParentItem(ActionEvent actionEvent){
-        TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
-        int pos = treeView.getFocusModel().getFocusedIndex();
-        UserItem userItem = item.getValue();
-//        TreeItem<UserItem> newItem = new TreeItem<>();
-        if (userItem == null){
-            Platform.runLater(() -> {
-                treeView.getRoot().getChildren().add(0, new TreeItem<>());
-            });
-
-            return null;
-        } else if (userItem.isDir()){
-            return userItem.getFile();
-        } else {
-            return treeView.getFocusModel().getFocusedItem().getParent().getValue().getFile();
-        }
-    }
 
     public void setEditing(ActionEvent actionEvent){
-//        int pos = treeView.getFocusModel().getFocusedIndex();
-//        textField.setLayoutX(item.getGraphic().getLayoutX());
-//        System.out.println(item.getGraphic().getLayoutBounds().getHeight());
-//        textField.setLayoutY((pos + 2) * (item.getGraphic().getLayoutBounds().getHeight()));
-        TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
-        ObservableList <TreeItem<UserItem>> list = item.getParent().getChildren();
-        TreeItem<UserItem> newItem = new TreeItem<>(new UserItem(new File(""), true));
-        list.add(0, newItem);
 
         treeView.setEditable(true);
+        TreeItem<UserItem> newItem = new TreeItem<>();
+        newItem.setValue(new UserItem(new File("Item " + treeView.getExpandedItemCount()), true));
+        TreeItem<UserItem> parentItem =  treeView.getSelectionModel().getSelectedItem();
+        if (parentItem == null){
+            parentItem = treeView.getRoot();
+        } else if (!parentItem.getValue().isDir()) {
+            parentItem = parentItem.getParent();
+        }
+        parentItem.getChildren().add(0, newItem);
         treeView.requestFocus();
-//        treeView.layout();
-        System.out.println(treeView.isEditable());
-        treeView.getSelectionModel().select(newItem);
+//        treeView.getSelectionModel().select(newItem);
+//        treeView.getSelectionModel().select(parentItem);
+        parentItem.setExpanded(true);
+        treeView.getFocusModel().focus(0);
+        treeView.layout();
         treeView.edit(newItem);
-
-
-//        PauseTransition p = new PauseTransition( Duration.millis( 100 ) );
-//        p.setOnFinished(event -> treeView.edit(newItem));
-//        p.play();
-
-
-
-/*        treeView.setOnEditStart(new EventHandler<TreeView.EditEvent<UserItem>>() {
-            @Override
-            public void handle(TreeView.EditEvent<UserItem> event) {
-                System.out.println("Start editing");
-                System.out.println(event.getNewValue().toString());
-            }
-        });*/
-
+        treeView.setEditable(false);
     }
 
     public void updateViewNew(MyDirectory myDirectory) {

@@ -8,6 +8,8 @@ import com.gb.classes.command.UpdateCatalog;
 import com.gb.net.Net;
 import com.gb.views.WindowTreeView;
 import com.gb.views.WindowTreeViewOthver;
+import com.gb.views.WindowTreeViewSemple;
+import com.gb.views.WindowTreeViewSempleUser;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -24,15 +26,17 @@ public class CloudWindowController implements Initializable {
     public VBox VBoxHomeWindow;
     public AnchorPane HomeWindow;
 
-    public WindowTreeViewOthver treeView;
+    public WindowTreeView treeView;
     public TextField interText;
 
     private Net net;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        treeView = new WindowTreeView(VBoxHomeWindow);
-        treeView = new WindowTreeViewOthver(VBoxHomeWindow);
+        treeView = new WindowTreeView(VBoxHomeWindow);
+//        treeView = new WindowTreeViewOthver(VBoxHomeWindow);
+//        treeView = new WindowTreeViewSemple(VBoxHomeWindow);
+//        treeView = new WindowTreeViewSempleUser(VBoxHomeWindow);
 
         try {
             Socket socket = new Socket("localhost", 6830);
@@ -53,7 +57,7 @@ public class CloudWindowController implements Initializable {
         } else if (com instanceof Catalog){
 //            treeView.updateView(((Catalog) com).getCatalog());
         } else if (com instanceof MyDirectory){
-//            treeView.updateViewNew((MyDirectory) com);
+            treeView.updateViewNew((MyDirectory) com);
         }
 /*        Platform.runLater(() -> {
             statuses.getItems().add(message);
