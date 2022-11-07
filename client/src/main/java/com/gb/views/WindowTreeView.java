@@ -30,6 +30,7 @@ public class WindowTreeView {
 
     private final Ico ico;
 
+    private StringBuilder parentDir;
     private MyDirectory md;
 
 
@@ -58,10 +59,14 @@ public class WindowTreeView {
             public UserItem fromString(String string) {
                 updateImageForExpanded(treeView.getRoot().getChildren());
                 treeView.requestFocus();
-                return new UserItem(new File(string), true);
+
+                File file = new File(string);
+                System.out.println(file);
+                return new UserItem(file,true);
             }
         }));
         root.setExpanded(true);
+        parentDir = new StringBuilder();
 
         initializeList();
     }
@@ -69,71 +74,10 @@ public class WindowTreeView {
 
     }
 
-/*    public void updateView(LinkedList<File> newList){
-        this.list = newList;
-        ObservableList<TreeItem<String>> userCatalog = treeView.getRoot().getChildren();
-        userCatalog.remove(0, userCatalog.size());
+    private String readDir (){
 
-        list.forEach((f) -> {
-
-
-
-            if(f.isDirectory()){
-//                TreeItem<String> item = new TreeItem<>(f.getName());
-                Path path = f.toPath();
-                TreeItem<String> parentCat = treeView.getRoot();
-                for (int i = 2; i < path.getNameCount(); i++) {
-                    String catName = path.getName(i).toString();
-                    System.out.println("Че там прочитали: " + catName);
-//                    TreeItem<String> cat = null;
-                    boolean isEmpty = false;
-                    for (TreeItem<String> treeItem : parentCat.getChildren()) {
-                        if (treeItem.getValue().equals(catName)){
-                            System.out.println("Есть совпадение");
-//                            cat = treeItem;
-                            isEmpty= true;
-                            parentCat = treeItem;
-                            break;
-                        }
-                    }
-                    if (!isEmpty){
-                        TreeItem<String> newCat = new TreeItem<>(catName, new ImageView(ico.getIco("cat")));
-                        parentCat.getChildren().add(newCat);
-                        parentCat = newCat;
-                    }
-                }
-            } else {
-                TreeItem<String> item = new TreeItem<>(f.getName(), new ImageView(ico.getIco("file")));
-                Path path = f.toPath();
-                TreeItem<String> parentCat = treeView.getRoot();
-                for (int i = 2; i < path.getNameCount()-1; i++) {
-                    String catName = path.getName(i).toString();
-                    System.out.println("Че там прочитали: " + catName);
-                    TreeItem<String> cat = null;
-                    for (TreeItem<String> treeItem : parentCat.getChildren()) {
-                        System.out.println("Вот это ----> " + treeItem.getValue());
-                        if (treeItem.getValue().equals(catName)){
-                            System.out.println("Есть совпадение");
-                            cat = treeItem;
-                            parentCat = treeItem;
-                            break;
-                        }
-                    }
-                    if (cat == null){
-                        TreeItem<String> newCat = new TreeItem<>(catName);
-                        parentCat.getChildren().add(newCat);
-                        parentCat = newCat;
-                    }
-
-                }
-                assert parentCat != null;
-                parentCat.getChildren().add(item);
-                System.out.println("Добавляем " + item + " в " + parentCat);
-            }
-        });
-
-
-    }*/
+        return "";
+    }
 
 
     public void setEditing(ActionEvent actionEvent){
@@ -149,8 +93,6 @@ public class WindowTreeView {
         }
         parentItem.getChildren().add(0, newItem);
         treeView.requestFocus();
-//        treeView.getSelectionModel().select(newItem);
-//        treeView.getSelectionModel().select(parentItem);
         parentItem.setExpanded(true);
         treeView.getFocusModel().focus(0);
         treeView.layout();
