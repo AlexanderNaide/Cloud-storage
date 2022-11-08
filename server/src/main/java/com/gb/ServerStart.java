@@ -1,7 +1,6 @@
 package com.gb;
 
-import com.gb.handlers.CloudServerHandler;
-import com.gb.handlers.CloudServerHandlerRadCommand;
+import com.gb.handlers.CloudServerHandlerReadCommand;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -36,7 +35,7 @@ public class ServerStart /*implements Runnable*/ {
 //                                    new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new CloudServerHandlerRadCommand()
+                                    new CloudServerHandlerReadCommand()
                             );
                         }
                     })

@@ -22,18 +22,22 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class CloudWindowController implements Initializable {
-    public VBox VBoxHomeWindow;
+public class CloudWindowController extends WindowTreeView implements Initializable {
+//public class CloudWindowController implements Initializable {
+//    public VBox VBoxHomeWindow;
     public AnchorPane HomeWindow;
 
-    public WindowTreeView treeView;
+//    public WindowTreeView treeView;
     public TextField interText;
 
     private Net net;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        treeView = new WindowTreeView(VBoxHomeWindow);
+        super.initialize(this);
+//        super.controller = this;
+//        treeView = new WindowTreeView(VBoxHomeWindow);
+//        super(VBoxHomeWindow);
 //        treeView = new WindowTreeViewOthver(VBoxHomeWindow);
 //        treeView = new WindowTreeViewSemple(VBoxHomeWindow);
 //        treeView = new WindowTreeViewSempleUser(VBoxHomeWindow);
@@ -43,12 +47,16 @@ public class CloudWindowController implements Initializable {
             net = new Net(this::readCommand, socket);
 
             Command c = new UpdateCatalog();
-            net.sendMessages(c);
+            sendMessages(c);
 
 
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public void sendMessages(Command command) {
+        net.sendMessages(command);
     }
 
     private void readCommand(Command com) {
@@ -57,7 +65,8 @@ public class CloudWindowController implements Initializable {
         } else if (com instanceof Catalog){
 //            treeView.updateView(((Catalog) com).getCatalog());
         } else if (com instanceof MyDirectory){
-            treeView.updateViewNew((MyDirectory) com);
+//            treeView.updateViewNew((MyDirectory) com);
+            updateViewNew((MyDirectory) com);
         }
 /*        Platform.runLater(() -> {
             statuses.getItems().add(message);
@@ -74,17 +83,18 @@ public class CloudWindowController implements Initializable {
 
     public void TestButton (ActionEvent actionEvent) {
         TestCommand tc = new TestCommand();
-        net.sendMessages(tc);
+        sendMessages(tc);
     }
 
     public void UpdateList(ActionEvent actionEvent) {
         UpdateCatalog uc = new UpdateCatalog();
-        net.sendMessages(uc);
+        sendMessages(uc);
     }
 
     public void AddDirectory(ActionEvent actionEvent) {
 
-        treeView.setEditing(actionEvent);
+//        treeView.setEditing(actionEvent);
+        setEditing(actionEvent);
 //        interText.setVisible(true);
 //        File file = treeView.getParentItem(actionEvent);
 //        System.out.println(file.getName());
