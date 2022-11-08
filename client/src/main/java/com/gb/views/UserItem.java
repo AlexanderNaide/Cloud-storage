@@ -3,6 +3,8 @@ package com.gb.views;
 import java.io.File;
 
 public class UserItem {
+
+    private String owner = "user1";
     private File file;
     private File localFile;
     private final boolean isDir;
@@ -25,9 +27,15 @@ public class UserItem {
         this.file = new File(patch + name);
     }
 
+    public void setFile(File file){
+        if (this.file == null){
+            this.file = file;
+        }
+    }
+
     @Override
     public String toString() {
-        if (file != null) {
+        if (file != null && !file.getName().equals(owner)) {
             return file.getName();
         } else {
             if (temporaryName != null){

@@ -3,16 +3,15 @@ package com.gb.controllers;
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.command.Catalog;
 import com.gb.classes.Command;
+import com.gb.classes.command.DeleteFile;
 import com.gb.classes.command.TestCommand;
 import com.gb.classes.command.UpdateCatalog;
 import com.gb.net.Net;
-import com.gb.views.WindowTreeView;
-import com.gb.views.WindowTreeViewOthver;
-import com.gb.views.WindowTreeViewSemple;
-import com.gb.views.WindowTreeViewSempleUser;
+import com.gb.views.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -23,8 +22,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class CloudWindowController extends WindowTreeView implements Initializable {
-//public class CloudWindowController implements Initializable {
-//    public VBox VBoxHomeWindow;
     public AnchorPane HomeWindow;
 
 //    public WindowTreeView treeView;
@@ -35,9 +32,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(this);
-//        super.controller = this;
-//        treeView = new WindowTreeView(VBoxHomeWindow);
-//        super(VBoxHomeWindow);
+
 //        treeView = new WindowTreeViewOthver(VBoxHomeWindow);
 //        treeView = new WindowTreeViewSemple(VBoxHomeWindow);
 //        treeView = new WindowTreeViewSempleUser(VBoxHomeWindow);
@@ -92,15 +87,19 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     }
 
     public void AddDirectory(ActionEvent actionEvent) {
-
-//        treeView.setEditing(actionEvent);
         setEditing(actionEvent);
-//        interText.setVisible(true);
-//        File file = treeView.getParentItem(actionEvent);
-//        System.out.println(file.getName());
     }
 
 
     public void TextInsered(ActionEvent actionEvent) {
+    }
+
+    public void DeleteButton(ActionEvent actionEvent) {
+        TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
+        if (item != treeView.getRoot()){
+            File file = item.getValue().getFile();
+            DeleteFile del = new DeleteFile(file);
+            sendMessages(del);
+        }
     }
 }

@@ -22,39 +22,28 @@ public class WindowTreeView {
 
     protected CloudWindowController controller;
     public VBox VBoxHomeWindow;
-//    private final TreeView <String> treeView;
-    private TreeView <UserItem> treeView;
-
-    private LinkedList<File> list;
-
+    protected TreeView <UserItem> treeView;
     private Ico ico;
-
-    private StringBuilder parentDir;
-    private MyDirectory md;
     public void initialize(CloudWindowController controller) {
 
         this.controller = controller;
-//        assert false;
-//        this.VBoxHomeWindow = VBoxHomeWindow;
-//        treeView = new TreeView<String>();
         treeView = new TreeView<UserItem>();
+//        treeView.setShowRoot(false);  // скрывает корневой каталог
         this.VBoxHomeWindow.getChildren().add(treeView);
         VBox.setVgrow(treeView, Priority.ALWAYS);
         treeView.setPadding(new Insets(5.0));
         ico = new IconVer1();
-//        root = new TreeItem<>("Home", new ImageView(ico.getIco("home")));
-        UserItem rootItem = new UserItem(new File("Home"), true);
-        TreeItem<UserItem> root = new TreeItem<>(rootItem, new ImageView(ico.getIco("home")));
-        treeView.setRoot(root);
+        treeView.setRoot(new TreeItem<>(new UserItem("", true, "Home"), new ImageView(ico.getIco("home"))));
+
         treeView.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
             updateImageForExpanded(treeView.getRoot().getChildren());
         });
         treeView.setCellFactory(param -> new TextFieldTreeCell<UserItem>(new StringConverter<UserItem>() {
+
             @Override
             public String toString(UserItem object) {
                 return object.toString();
             }
-
             @Override
             public UserItem fromString(String string) {
                 updateImageForExpanded(treeView.getRoot().getChildren());
@@ -65,61 +54,13 @@ public class WindowTreeView {
                 return userItem;
             }
         }));
-        root.setExpanded(true);
-        parentDir = new StringBuilder();
-
+        treeView.getRoot().setExpanded(true);
     }
-
-    /*public WindowTreeView (VBox VBoxHomeWindow){
-//        this.controller = controller;
-//        assert false;
-        this.VBoxHomeWindow = VBoxHomeWindow;
-//        treeView = new TreeView<String>();
-        treeView = new TreeView<UserItem>();
-        this.VBoxHomeWindow.getChildren().add(treeView);
-        VBox.setVgrow(treeView, Priority.ALWAYS);
-        treeView.setPadding(new Insets(5.0));
-        ico = new IconVer1();
-//        root = new TreeItem<>("Home", new ImageView(ico.getIco("home")));
-        UserItem rootItem = new UserItem(new File("Home"), true);
-        TreeItem<UserItem> root = new TreeItem<>(rootItem, new ImageView(ico.getIco("home")));
-        treeView.setRoot(root);
-        treeView.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-            updateImageForExpanded(treeView.getRoot().getChildren());
-        });
-        treeView.setCellFactory(param -> new TextFieldTreeCell<UserItem>(new StringConverter<UserItem>() {
-            @Override
-            public String toString(UserItem object) {
-                return object.toString();
-            }
-
-            @Override
-            public UserItem fromString(String string) {
-                updateImageForExpanded(treeView.getRoot().getChildren());
-                treeView.requestFocus();
-                UserItem userItem = param.getEditingItem().getValue();
-                userItem.generateFile(string);
-                controller.sendMessages(new NewCatalog(userItem.getFile()));
-                return userItem;
-            }
-        }));
-        root.setExpanded(true);
-        parentDir = new StringBuilder();
-    }*/
-
-/*    private String readDir (TreeItem<UserItem> item){
-        StringBuilder sb = new StringBuilder();
-        sb.append("\\");
-        sb.insert(0, item.getValue().getFile());
-        System.out.println("readDir - " + sb);
-        return sb.toString();
-    }*/
-
         private String readTemporaryName (TreeItem<UserItem> item){
             String name = "Новая папка";
             String newName = name;
             boolean x = false;
-            int n = 1;
+            int n = 2;
             while (!x){
                 for (TreeItem<UserItem> child : item.getChildren()) {
                     if (child.getValue().toString().equals(newName)){
@@ -139,16 +80,12 @@ public class WindowTreeView {
 
         treeView.setEditable(true);
         TreeItem<UserItem> newItem = new TreeItem<>();
-//        newItem.setValue(new UserItem(new File("Item " + treeView.getExpandedItemCount()), true));
         TreeItem<UserItem> parentItem =  treeView.getSelectionModel().getSelectedItem();
-//        newItem.setValue(new UserItem(new File("parent","Item " + treeView.getExpandedItemCount()), true));
         if (parentItem == null){
             parentItem = treeView.getRoot();
         } else if (!parentItem.getValue().isDir()) {
             parentItem = parentItem.getParent();
         }
-//        newItem.setValue(new UserItem(readDir(parentItem),true));
-
         newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
         parentItem.getChildren().add(0, newItem);
         treeView.requestFocus();
@@ -160,12 +97,13 @@ public class WindowTreeView {
     }
 
     public void updateViewNew(MyDirectory myDirectory) {
-        md = myDirectory;
-        TreeItem<UserItem> newUserCatalog = new TreeItem<>();
-        newUserCatalog.getChildren().addAll(updateViewCat(md).getChildren());
+        treeView.getRoot().getValue().setFile(myDirectory.getCatalog());
+        TreeItem<UserItem> newUserCatalog = new TreeItem<>(new UserItem(myDirectory.getCatalog(), true));
+        newUserCatalog.getChildren().addAll(updateViewCat(myDirectory).getChildren());
         updateExpanded(newUserCatalog.getChildren(), treeView.getRoot().getChildren());
         treeView.getRoot().getChildren().clear();
         treeView.getRoot().getChildren().addAll(newUserCatalog.getChildren());
+
         updateImageForExpanded(treeView.getRoot().getChildren());
     }
 
@@ -196,8 +134,12 @@ public class WindowTreeView {
     public void updateImageForExpanded(ObservableList<TreeItem<UserItem>> Catalog) {
         for (TreeItem<UserItem> item : Catalog) {
             if (item.getValue().isDir()){
-                item.setGraphic(item.isExpanded() ? new ImageView(ico.getIco("openCat")) : new ImageView(ico.getIco("cat")));
-                updateImageForExpanded(item.getChildren());
+                if (item.getChildren().size() > 0) {
+                    item.setGraphic(item.isExpanded() ? new ImageView(ico.getIco("openCat")) : new ImageView(ico.getIco("cat")));
+                    updateImageForExpanded(item.getChildren());
+                } else {
+                    item.setGraphic(new ImageView(ico.getIco("cat")));
+                }
             }
         }
     }

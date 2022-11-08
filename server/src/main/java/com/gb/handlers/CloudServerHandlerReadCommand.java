@@ -3,11 +3,8 @@ package com.gb.handlers;
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.MyMessage;
-import com.gb.classes.command.Catalog;
+import com.gb.classes.command.*;
 import com.gb.classes.Command;
-import com.gb.classes.command.NewCatalog;
-import com.gb.classes.command.TestCommand;
-import com.gb.classes.command.UpdateCatalog;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
@@ -51,6 +48,9 @@ public class CloudServerHandlerReadCommand extends ChannelInboundHandlerAdapter 
                 } else if (msg instanceof NewCatalog) {
                     System.out.println("Пришло \"Новый каталог\".");
                     createNewCatalog(ctx, (NewCatalog) msg);
+                } else if (msg instanceof DeleteFile) {
+                    System.out.println("Пришло \"Удалить файл\".");
+                    deleteFile(ctx, (DeleteFile) msg);
                 }
 
             } else if (msg instanceof MyMessage) {
@@ -80,11 +80,24 @@ public class CloudServerHandlerReadCommand extends ChannelInboundHandlerAdapter 
     public void createNewCatalog(ChannelHandlerContext ctx, NewCatalog newCatalog) throws NotDirectoryException, IOException {
 
         Path newCat = newCatalog.getFile().toPath();
+        System.out.println(newCat);
         if(!Files.exists(newCat)){
             if (newCat.getName(0).toString().equals("Root")){
                 if (newCat.getName(1).toString().equals("user1")){
                     Files.createDirectory(newCat);
                 }
+            }
+        }
+        updateCatalog(ctx);
+    }
+
+    public void deleteFile(ChannelHandlerContext ctx, DeleteFile deleteFile) throws NotDirectoryException, IOException {
+
+        Path delF = deleteFile.getFile().toPath();
+        System.out.println(delF);
+        if (delF.getName(0).toString().equals("Root")){
+            if (delF.getName(1).toString().equals("user1")){
+                Files.deleteIfExists(delF);
             }
         }
         updateCatalog(ctx);
