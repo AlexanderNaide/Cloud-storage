@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class CloudWindowController extends WindowTreeView implements Initializable {
@@ -29,7 +30,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 //    public WindowTreeView treeView;
     public TextField interText;
 
-    private Desktop desktop = Desktop.getDesktop();
+    private Desktop desktop;
 
     private FileChooser fileChooser;
 
@@ -39,6 +40,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(this);
         fileChooser = new FileChooser();
+        desktop = Desktop.getDesktop();
 
 //        treeView = new WindowTreeViewOthver(VBoxHomeWindow);
 //        treeView = new WindowTreeViewSemple(VBoxHomeWindow);
@@ -111,6 +113,9 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     }
 
     public void AddFile(ActionEvent actionEvent) {
-//        List<File> files = fileChooser.showOpenMultipleDialog()
+        List<File> files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
+        for (File file : files) {
+            System.out.println(file);
+        }
     }
 }
