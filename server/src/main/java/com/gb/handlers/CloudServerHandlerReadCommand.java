@@ -32,6 +32,10 @@ public class CloudServerHandlerReadCommand extends ChannelInboundHandlerAdapter 
                     System.out.println("Клент " + ctx.channel().id() + " хочет обновить каталог: ");
 
                     /**    Вот это работает *******
+                     *
+                     *
+                     * Этот метод понадобится при регистрации нового пользователя.
+                     *
                     Catalog answer = createCatalog(ctx);
                      */
 
