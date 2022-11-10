@@ -14,7 +14,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
@@ -27,11 +29,16 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 //    public WindowTreeView treeView;
     public TextField interText;
 
+    private Desktop desktop = Desktop.getDesktop();
+
+    private FileChooser fileChooser;
+
     private Net net;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(this);
+        fileChooser = new FileChooser();
 
 //        treeView = new WindowTreeViewOthver(VBoxHomeWindow);
 //        treeView = new WindowTreeViewSemple(VBoxHomeWindow);
@@ -101,5 +108,9 @@ public class CloudWindowController extends WindowTreeView implements Initializab
             DeleteFile del = new DeleteFile(file);
             sendMessages(del);
         }
+    }
+
+    public void AddFile(ActionEvent actionEvent) {
+//        List<File> files = fileChooser.showOpenMultipleDialog()
     }
 }

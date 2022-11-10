@@ -9,7 +9,7 @@
         <ButtonBar prefHeight="40.0" prefWidth="200.0">
             <buttons>
                 <Button mnemonicParsing="false" onAction="#UpdateList" text="Update list" />
-                <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#TestButton" text="Add File" />
+                <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#AddFile" text="Add File" />
                 <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#AddDirectory" text="Add Dir" />
                 <Button mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
             </buttons>
