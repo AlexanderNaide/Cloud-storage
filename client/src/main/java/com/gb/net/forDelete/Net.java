@@ -1,13 +1,10 @@
-package com.gb.net;
+package com.gb.net.forDelete;
 
 import com.gb.classes.Command;
 import com.gb.classes.MyMessage;
-import com.gb.classes.command.UpdateCatalog;
 import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
 import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 

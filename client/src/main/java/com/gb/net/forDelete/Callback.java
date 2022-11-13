@@ -1,4 +1,4 @@
-package com.gb.net;
+package com.gb.net.forDelete;
 
 import com.gb.classes.Command;
 

@@ -6,14 +6,14 @@ import com.gb.classes.Command;
 import com.gb.classes.command.DeleteFile;
 import com.gb.classes.command.TestCommand;
 import com.gb.classes.command.UpdateCatalog;
-import com.gb.net.Net;
+import com.gb.net.NettyNet;
+import com.gb.net.forDelete.Net;
 import com.gb.views.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.awt.*;
@@ -34,7 +34,8 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
     private FileChooser fileChooser;
 
-    private Net net;
+//    private Net net;
+    private NettyNet net;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -46,21 +47,32 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 //        treeView = new WindowTreeViewSemple(VBoxHomeWindow);
 //        treeView = new WindowTreeViewSempleUser(VBoxHomeWindow);
 
-        try {
-            Socket socket = new Socket("localhost", 6830);
-            net = new Net(this::readCommand, socket);
-
-            Command c = new UpdateCatalog();
-            sendMessages(c);
+        net = new NettyNet(this::readCommand);
 
 
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+//        Socket socket = null;
+//        try {
+//            socket = new Socket("localhost", 6830);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        try {
+////            net = new Net(this::readCommand, socket);
+//            net = new NettyNet(this::readCommand);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+
+
+//        sendMessages(new UpdateCatalog());
+        System.out.println("Клинт готов отправить сообщение");
+
+
     }
 
     public void sendMessages(Command command) {
         net.sendMessages(command);
+//        net.sendMessage(command);
     }
 
     private void readCommand(Command com) {
