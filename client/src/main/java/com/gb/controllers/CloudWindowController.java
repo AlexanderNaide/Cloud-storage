@@ -65,19 +65,17 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
 
 //        sendMessages(new UpdateCatalog());
-        System.out.println("Клинт готов отправить сообщение");
 
 
     }
 
     public void sendMessages(Command command) {
         net.sendMessages(command);
-//        net.sendMessage(command);
     }
 
     private void readCommand(Command com) {
         if (com instanceof UpdateCatalog){
-            System.out.println(com.getName());
+//            System.out.println(com.getName());
         } else if (com instanceof Catalog){
 //            treeView.updateView(((Catalog) com).getCatalog());
         } else if (com instanceof MyDirectory){

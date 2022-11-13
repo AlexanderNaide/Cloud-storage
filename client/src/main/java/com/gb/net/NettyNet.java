@@ -16,12 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NettyNet {
     private SocketChannel channel;
-    private MessageReceived received;
+    private EventLoopGroup group;
 
     public NettyNet(MessageReceived received) {
-        this.received = received;
         new Thread(() ->{
-            EventLoopGroup group = new NioEventLoopGroup();
+            group = new NioEventLoopGroup();
             try{
                 Bootstrap bootstrap = new Bootstrap();
                 ChannelFuture future = bootstrap.channel(NioSocketChannel.class)
@@ -41,13 +40,16 @@ public class NettyNet {
             } catch (Exception e){
                 log.error("e=", e);
             } finally {
-                group.shutdownGracefully();
+                shutdown();
             }
         }).start();
-        System.out.println("Клиент запустился?");
     }
 
     public void sendMessages(Command com){
         channel.writeAndFlush(com);
+    }
+
+    public void shutdown(){
+        group.shutdownGracefully();
     }
 }

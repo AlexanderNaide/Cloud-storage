@@ -22,4 +22,9 @@ public class AppStart extends Application {
         primaryStage.setResizable(true);
         primaryStage.show();
     }
+
+    @Override
+    public void stop() throws Exception {
+        System.exit(0);
+    }
 }
