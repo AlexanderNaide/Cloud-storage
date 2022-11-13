@@ -26,6 +26,7 @@ public class MyDirectory extends Command {
     }
 
     public MyDirectory(File file) throws NotDirectoryException {
+        this.name = "myDirectory";
         this.catalogName = file;
         this.files = new ArrayList<>();
         this.directories = new ArrayList<>();

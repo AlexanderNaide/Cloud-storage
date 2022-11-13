@@ -6,6 +6,7 @@ import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.Catalog;
 import com.gb.classes.command.DeleteFile;
 import com.gb.classes.command.NewCatalog;
+import com.gb.classes.command.NewFile;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -27,21 +28,23 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
                 case "Test" -> System.out.println("Test");
                 case "newCatalog" -> createNewCatalog(channel, (NewCatalog) command);
                 case "deleteFile" -> deleteFile(channel, (DeleteFile) command);
+                case "newFile" -> createNewFile(channel, (NewFile) command);
             }
         } else {
 //            channel.writeAndFlush(command);
         }
     }
 
-    public void updateCatalog(ChannelHandlerContext ctx) throws NotDirectoryException {
+    public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
         Command answer = new MyDirectory(Paths.get("Root/user1").toFile());
-        ctx.write(answer);
+        channel.writeAndFlush(answer);
+//        System.out.println("Новый каталог отправлен");
     }
 
-    public void createNewCatalog(ChannelHandlerContext ctx, NewCatalog newCatalog) throws NotDirectoryException, IOException {
+    public void createNewCatalog(ChannelHandlerContext channel, NewCatalog newCatalog) throws NotDirectoryException, IOException {
 
         Path newCat = newCatalog.getFile().toPath();
-        System.out.println(newCat);
+//        System.out.println(newCat);
         if(!Files.exists(newCat)){
             if (newCat.getName(0).toString().equals("Root")){
                 if (newCat.getName(1).toString().equals("user1")){
@@ -49,10 +52,24 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
                 }
             }
         }
-        updateCatalog(ctx);
+        updateCatalog(channel);
     }
 
-    public void deleteFile(ChannelHandlerContext ctx, DeleteFile deleteFile) throws NotDirectoryException, IOException {
+    public void createNewFile(ChannelHandlerContext channel, NewFile newFile) throws NotDirectoryException, IOException {
+
+        Path createFile = newFile.getFile().toPath();
+//        System.out.println(newCat);
+        if(!Files.exists(createFile)){
+            if (createFile.getName(0).toString().equals("Root")){
+                if (createFile.getName(1).toString().equals("user1")){
+                    Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
+                }
+            }
+        }
+        updateCatalog(channel);
+    }
+
+    public void deleteFile(ChannelHandlerContext channel, DeleteFile deleteFile) throws NotDirectoryException, IOException {
 
         Path delF = deleteFile.getFile().toPath();
         System.out.println(delF);
@@ -61,10 +78,10 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
                 Files.deleteIfExists(delF);
             }
         }
-        updateCatalog(ctx);
+        updateCatalog(channel);
     }
 
-    private Catalog createCatalog(ChannelHandlerContext ctx) throws IOException {
+    private Catalog createCatalog(ChannelHandlerContext channel) throws IOException {
         Path home = Paths.get( "root/" + "user1");
         Catalog catalog = new Catalog();
 //        final File[] path = new File[1];
@@ -83,7 +100,7 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
                 return FileVisitResult.CONTINUE;
             }
         });
-        System.out.println("Каталог создан.");
+//        System.out.println("Каталог создан.");
         return catalog;
     }
 }

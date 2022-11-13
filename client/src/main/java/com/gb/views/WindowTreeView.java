@@ -5,18 +5,17 @@ import com.gb.classes.command.NewCatalog;
 import com.gb.controllers.CloudWindowController;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.control.skin.TreeCellSkin;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.StringConverter;
 
 import java.io.File;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.ResourceBundle;
 
 public class WindowTreeView {
 
@@ -38,6 +37,26 @@ public class WindowTreeView {
         treeView.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
             updateImageForExpanded(treeView.getRoot().getChildren());
         });
+
+        treeView.setOnEditStart(event -> {
+            System.out.println("Начало редактирования");
+//                editStart(event);
+        });
+
+        treeView.setOnEditCommit(event -> {
+            System.out.println("Коммит редактирования");
+        });
+
+        treeView.setOnEditCancel(event -> {
+            // создать слушатель на щелчек мыши - если он не в окошке редактирования - вызывать это событие
+
+            // https://examples.javacodegeeks.com/core-java/javafx-treeview-example/
+
+            System.out.println("Отмена редактирования");
+            TreeItem<UserItem> parentItem = event.getTreeItem().getParent();
+            parentItem.getChildren().remove(event.getTreeItem());
+        });
+
         treeView.setCellFactory(param -> new TextFieldTreeCell<UserItem>(new StringConverter<UserItem>() {
 
             @Override
@@ -53,7 +72,20 @@ public class WindowTreeView {
                 controller.sendMessages(new NewCatalog(userItem.getFile()));
                 return userItem;
             }
-        }));
+        }){
+            @Override
+            public void updateItem(UserItem item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setStyle("-fx-indent: 30;");
+                }
+            }
+        });
+
+
         treeView.getRoot().setExpanded(true);
     }
         private String readTemporaryName (TreeItem<UserItem> item){
@@ -75,17 +107,22 @@ public class WindowTreeView {
         return newName;
     }
 
-
-    public void setEditing(ActionEvent actionEvent){
-
-        treeView.setEditable(true);
-        TreeItem<UserItem> newItem = new TreeItem<>();
+    public TreeItem<UserItem> getParentItem(){
         TreeItem<UserItem> parentItem =  treeView.getSelectionModel().getSelectedItem();
         if (parentItem == null){
             parentItem = treeView.getRoot();
         } else if (!parentItem.getValue().isDir()) {
             parentItem = parentItem.getParent();
         }
+        return parentItem;
+    }
+
+
+    public void setEditing(ActionEvent actionEvent){
+
+        treeView.setEditable(true);
+        TreeItem<UserItem> parentItem = getParentItem();
+        TreeItem<UserItem> newItem = new TreeItem<>();
         newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
         parentItem.getChildren().add(0, newItem);
         treeView.requestFocus();
@@ -97,6 +134,9 @@ public class WindowTreeView {
     }
 
     public void updateViewNew(MyDirectory myDirectory) {
+
+//        System.out.println("Обновляемся");
+
         treeView.getRoot().getValue().setFile(myDirectory.getCatalog());
         TreeItem<UserItem> newUserCatalog = new TreeItem<>(new UserItem(myDirectory.getCatalog(), true));
         newUserCatalog.getChildren().addAll(updateViewCat(myDirectory).getChildren());

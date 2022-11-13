@@ -1,13 +1,9 @@
 package com.gb.controllers;
 
 import com.gb.classes.MyDir.MyDirectory;
-import com.gb.classes.command.Catalog;
+import com.gb.classes.command.*;
 import com.gb.classes.Command;
-import com.gb.classes.command.DeleteFile;
-import com.gb.classes.command.TestCommand;
-import com.gb.classes.command.UpdateCatalog;
 import com.gb.net.NettyNet;
-import com.gb.net.forDelete.Net;
 import com.gb.views.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -15,15 +11,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class CloudWindowController extends WindowTreeView implements Initializable {
     public AnchorPane HomeWindow;
 
@@ -43,45 +41,30 @@ public class CloudWindowController extends WindowTreeView implements Initializab
         fileChooser = new FileChooser();
         desktop = Desktop.getDesktop();
 
-//        treeView = new WindowTreeViewOthver(VBoxHomeWindow);
-//        treeView = new WindowTreeViewSemple(VBoxHomeWindow);
-//        treeView = new WindowTreeViewSempleUser(VBoxHomeWindow);
-
         net = new NettyNet(this::readCommand);
-
-
-//        Socket socket = null;
-//        try {
-//            socket = new Socket("localhost", 6830);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        try {
-////            net = new Net(this::readCommand, socket);
-//            net = new NettyNet(this::readCommand);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-
-
-//        sendMessages(new UpdateCatalog());
-
-
     }
 
     public void sendMessages(Command command) {
         net.sendMessages(command);
     }
 
-    private void readCommand(Command com) {
-        if (com instanceof UpdateCatalog){
-//            System.out.println(com.getName());
-        } else if (com instanceof Catalog){
-//            treeView.updateView(((Catalog) com).getCatalog());
-        } else if (com instanceof MyDirectory){
-//            treeView.updateViewNew((MyDirectory) com);
-            updateViewNew((MyDirectory) com);
+    private void readCommand(Command command) {
+
+//        System.out.println(" явообще что-то получаю? ");
+
+        log.debug("Received: {}", command);
+        if (command != null){
+            String com = command.getName();
+            switch (com) {
+                case "UpdateCatalog" -> System.out.println("Update catalog");
+                case "Test" -> System.out.println("Test");
+                case "myDirectory" -> updateViewNew((MyDirectory) command);
+            }
         }
+
+
+
+
 /*        Platform.runLater(() -> {
             statuses.getItems().add(message);
         });*/
@@ -124,8 +107,18 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
     public void AddFile(ActionEvent actionEvent) {
         List<File> files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
+        TreeItem<UserItem> parentItem = super.getParentItem();
+        parentItem.setExpanded(true);
         for (File file : files) {
-            System.out.println(file);
+            try {
+//                byte[] dataByte = Files.readAllBytes(Paths.get(file.getPath()));
+                byte[] dataByte = Files.readAllBytes(file.toPath());
+                String newFileName = parentItem.getValue().getFile().getPath() + "\\" + file.getName();
+                NewFile newFie = new NewFile(new File(newFileName), dataByte);
+                sendMessages(newFie);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
