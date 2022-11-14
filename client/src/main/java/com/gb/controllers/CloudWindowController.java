@@ -105,7 +105,17 @@ public class CloudWindowController extends WindowTreeView implements Initializab
         }
     }
 
-    public void AddFile(ActionEvent actionEvent) {
+    public void AddFile(ActionEvent actionEvent) throws IOException {
+/*
+        Вот эта тема загружает Эксплорер в указанной папке
+
+        String onlyPath = "D:\\GAME OF Thrones";
+        String completeCmd = "explorer.exe /select," + onlyPath;
+        new ProcessBuilder(("explorer.exe " + completeCmd).split(" ")).start();
+        */
+//        new ProcessBuilder("explorer.exe").start(); // а вот конкретно так стартует библиотека пользователя
+
+
         List<File> files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
         TreeItem<UserItem> parentItem = super.getParentItem();
         parentItem.setExpanded(true);
