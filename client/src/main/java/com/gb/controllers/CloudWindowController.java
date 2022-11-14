@@ -1,23 +1,33 @@
 package com.gb.controllers;
 
 import com.gb.classes.MyDir.MyDirectory;
+import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.*;
 import com.gb.classes.Command;
 import com.gb.net.NettyNet;
 import com.gb.views.*;
+import io.netty.channel.ChannelHandlerContext;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -28,18 +38,35 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 //    public WindowTreeView treeView;
     public TextField interText;
 
-    private Desktop desktop;
+//    private Desktop desktop;
 
     private FileChooser fileChooser;
 
+    private DirectoryChooser directoryChooser;
+
 //    private Net net;
     private NettyNet net;
+
+
+    /**
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
+
+
+// TODO: 014 14.11.22 Необходимо добавить всплывающие сообщения: если файл удаляется, если удаляется дирректория, если скачиваемый файл уже есть, если качается дирректория
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(this);
         fileChooser = new FileChooser();
-        desktop = Desktop.getDesktop();
+        directoryChooser = new DirectoryChooser();
+//        desktop = Desktop.getDesktop();
 
         net = new NettyNet(this::readCommand);
     }
@@ -59,6 +86,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
                 case "UpdateCatalog" -> System.out.println("Update catalog");
                 case "Test" -> System.out.println("Test");
                 case "myDirectory" -> updateViewNew((MyDirectory) command);
+                case "newFile" -> createNewFile((NewFile) command);
             }
         }
 
@@ -81,6 +109,15 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     public void TestButton (ActionEvent actionEvent) {
         TestCommand tc = new TestCommand();
         sendMessages(tc);
+    }
+
+    public void createNewFile(NewFile newFile){
+        try {
+            Path createFile = Paths.get(newFile.getFile().getPath());
+            Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void UpdateList(ActionEvent actionEvent) {
@@ -129,6 +166,15 @@ public class CloudWindowController extends WindowTreeView implements Initializab
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public void DownloadButton(ActionEvent actionEvent) {
+        File dir = directoryChooser.showDialog(HomeWindow.getScene().getWindow());
+        ObservableList<TreeItem<UserItem>> list = treeView.getSelectionModel().getSelectedItems();
+        for (TreeItem<UserItem> userItemTreeItem : list) {
+            File file = userItemTreeItem.getValue().getFile();
+            sendMessages(new GetFile(file, dir.getPath()));
         }
     }
 }

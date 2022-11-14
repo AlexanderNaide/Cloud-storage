@@ -3,17 +3,17 @@ package com.gb.handlers;
 import com.gb.classes.Command;
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyDir.NotDirectoryException;
-import com.gb.classes.command.Catalog;
-import com.gb.classes.command.DeleteFile;
-import com.gb.classes.command.NewCatalog;
-import com.gb.classes.command.NewFile;
+import com.gb.classes.command.*;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import javafx.scene.control.TreeItem;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 @Slf4j
 public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
@@ -29,6 +29,7 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
                 case "newCatalog" -> createNewCatalog(channel, (NewCatalog) command);
                 case "deleteFile" -> deleteFile(channel, (DeleteFile) command);
                 case "newFile" -> createNewFile(channel, (NewFile) command);
+                case "getFile" -> getFile(channel, (GetFile) command);
             }
         } else {
 //            channel.writeAndFlush(command);
@@ -65,6 +66,19 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
                     Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
                 }
             }
+        }
+        updateCatalog(channel);
+    }
+
+
+    public void getFile(ChannelHandlerContext channel, GetFile getFile) throws NotDirectoryException, IOException {
+
+        File file = getFile.getFile();
+        if(!file.isDirectory()){
+            File answerFile = new File(getFile.getTargetDir() + "\\" + file.getName());
+            byte[] dataByte = Files.readAllBytes(file.toPath());
+            Command answer = new NewFile(answerFile, dataByte);
+            channel.writeAndFlush(answer);
         }
         updateCatalog(channel);
     }

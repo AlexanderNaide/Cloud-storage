@@ -1,5 +1,7 @@
 package com.gb.views;
 
+import javafx.event.Event;
+
 import java.io.File;
 
 public class UserItem {

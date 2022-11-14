@@ -11,7 +11,8 @@
                 <Button mnemonicParsing="false" onAction="#UpdateList" text="Update list" />
                 <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#AddFile" text="Add File" />
                 <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#AddDirectory" text="Add Dir" />
-                <Button mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
+                <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#DownloadButton" text="Download" />
+                <Button layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
             </buttons>
            <padding>
                <Insets left="5.0" right="5.0" />

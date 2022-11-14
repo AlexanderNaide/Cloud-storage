@@ -5,17 +5,25 @@ import com.gb.classes.command.NewCatalog;
 import com.gb.controllers.CloudWindowController;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.control.skin.TreeCellSkin;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.StringConverter;
 
+import java.awt.*;
 import java.io.File;
+
+import static javafx.scene.control.TreeView.editAnyEvent;
+import static javafx.scene.control.TreeView.editCancelEvent;
 
 public class WindowTreeView {
 
@@ -40,36 +48,72 @@ public class WindowTreeView {
 
         treeView.setOnEditStart(event -> {
             System.out.println("Начало редактирования");
-//                editStart(event);
+
+            treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent e) {
+                    System.out.println("Click");
+//                    treeView.fireEvent(EventType<KeyEvent.ANY>(event.getSource()));
+//                    treeView.fireEvent(new KeyEvent(KeyEvent.ANY, ));
+                    Event.fireEvent(treeView, new Event(KeyEvent.CHAR_UNDEFINED(KeyCode.ESCAPE)));
+
+//                    treeView.getOnEditCancel().handle(new TreeView.EditEvent<>(event.getSource(), editCancelEvent()));
+                }
+            });
+
         });
 
         treeView.setOnEditCommit(event -> {
-            System.out.println("Коммит редактирования");
+            treeView.requestFocus();
+            updateImageForExpanded(treeView.getRoot().getChildren());
+            UserItem userItem = event.getTreeItem().getValue();
+            controller.sendMessages(new NewCatalog(userItem.getFile()));
         });
 
         treeView.setOnEditCancel(event -> {
+
+
             // создать слушатель на щелчек мыши - если он не в окошке редактирования - вызывать это событие
 
             // https://examples.javacodegeeks.com/core-java/javafx-treeview-example/
 
-            System.out.println("Отмена редактирования");
+            System.out.println("Евент - Отмена редактирования");
+
+            System.out.println(event);
+            System.out.println(event.getSource());
+            System.out.println(treeView.getOnEditCancel());
+
+
             TreeItem<UserItem> parentItem = event.getTreeItem().getParent();
             parentItem.getChildren().remove(event.getTreeItem());
         });
 
-        treeView.setCellFactory(param -> new TextFieldTreeCell<UserItem>(new StringConverter<UserItem>() {
 
+
+/*        treeView.setCellFactory(param -> new TextFieldTreeCell<UserItem>(){
+            @Override
+            public void updateItem(UserItem item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setStyle("-fx-indent: 30;");
+                }
+            }
+        });*/
+
+
+
+        treeView.setCellFactory(param -> new TextFieldTreeCell<UserItem>(new StringConverter<UserItem>(){
             @Override
             public String toString(UserItem object) {
                 return object.toString();
             }
             @Override
             public UserItem fromString(String string) {
-                updateImageForExpanded(treeView.getRoot().getChildren());
-                treeView.requestFocus();
                 UserItem userItem = param.getEditingItem().getValue();
                 userItem.generateFile(string);
-                controller.sendMessages(new NewCatalog(userItem.getFile()));
                 return userItem;
             }
         }){
