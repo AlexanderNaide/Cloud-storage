@@ -46,46 +46,21 @@ public class WindowTreeView {
             updateImageForExpanded(treeView.getRoot().getChildren());
         });
 
-        treeView.setOnEditStart(event -> {
-            System.out.println("Начало редактирования");
-
-            treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent e) {
-                    System.out.println("Click");
-//                    treeView.fireEvent(EventType<KeyEvent.ANY>(event.getSource()));
-//                    treeView.fireEvent(new KeyEvent(KeyEvent.ANY, ));
-                    Event.fireEvent(treeView, new Event(KeyEvent.CHAR_UNDEFINED(KeyCode.ESCAPE)));
-
-//                    treeView.getOnEditCancel().handle(new TreeView.EditEvent<>(event.getSource(), editCancelEvent()));
-                }
-            });
-
-        });
-
         treeView.setOnEditCommit(event -> {
             treeView.requestFocus();
             updateImageForExpanded(treeView.getRoot().getChildren());
             UserItem userItem = event.getTreeItem().getValue();
             controller.sendMessages(new NewCatalog(userItem.getFile()));
+            treeView.setEditable(false);
         });
 
         treeView.setOnEditCancel(event -> {
 
-
-            // создать слушатель на щелчек мыши - если он не в окошке редактирования - вызывать это событие
-
             // https://examples.javacodegeeks.com/core-java/javafx-treeview-example/
-
-            System.out.println("Евент - Отмена редактирования");
-
-            System.out.println(event);
-            System.out.println(event.getSource());
-            System.out.println(treeView.getOnEditCancel());
-
 
             TreeItem<UserItem> parentItem = event.getTreeItem().getParent();
             parentItem.getChildren().remove(event.getTreeItem());
+            treeView.setEditable(false);
         });
 
 
@@ -174,7 +149,7 @@ public class WindowTreeView {
         treeView.getFocusModel().focus(0);
         treeView.layout();
         treeView.edit(newItem);
-        treeView.setEditable(false);
+//        treeView.setEditable(false);
     }
 
     public void updateViewNew(MyDirectory myDirectory) {
