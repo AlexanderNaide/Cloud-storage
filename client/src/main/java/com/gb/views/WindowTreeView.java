@@ -2,6 +2,7 @@ package com.gb.views;
 
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.command.NewCatalog;
+import com.gb.classes.command.RenameFile;
 import com.gb.controllers.CloudWindowController;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,7 +31,7 @@ public class WindowTreeView {
     protected CloudWindowController controller;
     public VBox VBoxHomeWindow;
     protected TreeView <UserItem> treeView;
-    private Ico ico;
+    protected Ico ico;
     public void initialize(CloudWindowController controller) {
 
         this.controller = controller;
@@ -48,18 +49,32 @@ public class WindowTreeView {
 
         treeView.setOnEditCommit(event -> {
             treeView.requestFocus();
-            updateImageForExpanded(treeView.getRoot().getChildren());
             UserItem userItem = event.getTreeItem().getValue();
-            controller.sendMessages(new NewCatalog(userItem.getFile()));
             treeView.setEditable(false);
+            updateImageForExpanded(treeView.getRoot().getChildren());
+
+
+
+            if (userItem.isRename() == null){
+                controller.sendMessages(new NewCatalog(userItem.getFile()));
+            } else {
+                controller.sendMessages(new RenameFile(userItem.isRename(), userItem.getFile()));
+                userItem.renameFinished();
+            }
+
         });
 
         treeView.setOnEditCancel(event -> {
 
             // https://examples.javacodegeeks.com/core-java/javafx-treeview-example/
 
-            TreeItem<UserItem> parentItem = event.getTreeItem().getParent();
-            parentItem.getChildren().remove(event.getTreeItem());
+            TreeItem<UserItem> item = event.getTreeItem();
+            if (item.getValue().isRename() == null){
+                TreeItem<UserItem> parentItem = event.getTreeItem().getParent();
+                parentItem.getChildren().remove(event.getTreeItem());
+            } else {
+                item.getValue().renameFinished();
+            }
             treeView.setEditable(false);
         });
 
@@ -88,7 +103,9 @@ public class WindowTreeView {
             @Override
             public UserItem fromString(String string) {
                 UserItem userItem = param.getEditingItem().getValue();
-                userItem.generateFile(string);
+                userItem.renameFile(string);
+//                userItem.generateFile(string);
+
                 return userItem;
             }
         }){
@@ -107,7 +124,7 @@ public class WindowTreeView {
 
         treeView.getRoot().setExpanded(true);
     }
-        private String readTemporaryName (TreeItem<UserItem> item){
+        protected String readTemporaryName(TreeItem<UserItem> item){
             String name = "Новая папка";
             String newName = name;
             boolean x = false;
@@ -127,7 +144,7 @@ public class WindowTreeView {
     }
 
     public TreeItem<UserItem> getParentItem(){
-        TreeItem<UserItem> parentItem =  treeView.getSelectionModel().getSelectedItem();
+        TreeItem<UserItem> parentItem = treeView.getSelectionModel().getSelectedItem();
         if (parentItem == null){
             parentItem = treeView.getRoot();
         } else if (!parentItem.getValue().isDir()) {
@@ -137,18 +154,20 @@ public class WindowTreeView {
     }
 
 
-    public void setEditing(ActionEvent actionEvent){
+    public void setEditing(TreeItem<UserItem> item){
 
         treeView.setEditable(true);
-        TreeItem<UserItem> parentItem = getParentItem();
-        TreeItem<UserItem> newItem = new TreeItem<>();
-        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
-        parentItem.getChildren().add(0, newItem);
+//        TreeItem<UserItem> parentItem = getParentItem();
+//        TreeItem<UserItem> newItem = new TreeItem<>();
+//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
+//        parentItem.getChildren().add(0, newItem);
+//        parentItem.setExpanded(true);
         treeView.requestFocus();
-        parentItem.setExpanded(true);
         treeView.getFocusModel().focus(0);
         treeView.layout();
-        treeView.edit(newItem);
+        treeView.edit(item);
+
+
 //        treeView.setEditable(false);
     }
 
@@ -190,10 +209,10 @@ public class WindowTreeView {
         }
     }
 
-    public void updateImageForExpanded(ObservableList<TreeItem<UserItem>> Catalog) {
-        for (TreeItem<UserItem> item : Catalog) {
+    public void updateImageForExpanded(ObservableList<TreeItem<UserItem>> catalog) {
+        for (TreeItem<UserItem> item : catalog) {
             if (item.getValue().isDir()){
-                if (item.getChildren().size() > 0) {
+                if (item.getChildren().size() > 0 && item.isExpanded()) {
                     item.setGraphic(item.isExpanded() ? new ImageView(ico.getIco("openCat")) : new ImageView(ico.getIco("cat")));
                     updateImageForExpanded(item.getChildren());
                 } else {

@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -105,12 +106,6 @@ public class CloudWindowController extends WindowTreeView implements Initializab
         */
     }
 
-
-    public void TestButton (ActionEvent actionEvent) {
-        TestCommand tc = new TestCommand();
-        sendMessages(tc);
-    }
-
     public void createNewFile(NewFile newFile){
         try {
             Path createFile = Paths.get(newFile.getFile().getPath());
@@ -126,7 +121,23 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     }
 
     public void AddDirectory(ActionEvent actionEvent) {
-        setEditing(actionEvent);
+
+        TreeItem<UserItem> parentItem = getParentItem();
+        TreeItem<UserItem> newItem = new TreeItem<>();
+//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
+        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
+        newItem.setGraphic(new ImageView(ico.getIco("cat")));
+        parentItem.getChildren().add(0, newItem);
+        parentItem.setExpanded(true);
+        setEditing(newItem);
+
+
+//        treeView.requestFocus();
+//        treeView.getFocusModel().focus(0);
+//        treeView.layout();
+//        treeView.edit(newItem);
+//        treeView.setEditable(true);
+
     }
 
 
@@ -176,5 +187,20 @@ public class CloudWindowController extends WindowTreeView implements Initializab
             File file = userItemTreeItem.getValue().getFile();
             sendMessages(new GetFile(file, dir.getPath()));
         }
+    }
+
+    public void RenameButton(ActionEvent actionEvent) {
+//        TreeItem<UserItem> parentItem = getParentItem();
+//        TreeItem<UserItem> newItem = new TreeItem<>();
+//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
+
+
+        TreeItem<UserItem> newItem = treeView.getSelectionModel().getSelectedItem();
+        newItem.getValue().renameStarted();
+//        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
+//        newItem.setGraphic(new ImageView(ico.getIco("cat")));
+//        parentItem.getChildren().add(0, newItem);
+//        parentItem.setExpanded(true);
+        setEditing(newItem);
     }
 }

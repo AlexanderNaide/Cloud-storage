@@ -3,6 +3,9 @@ package com.gb.views;
 import javafx.event.Event;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class UserItem {
 
@@ -11,8 +14,20 @@ public class UserItem {
     private File localFile;
     private final boolean isDir;
     private String patch;
-
     private String temporaryName;
+    private File renameFile;
+
+    public File isRename() {
+        return renameFile;
+    }
+
+    public void renameStarted() {
+        this.renameFile = file;
+    }
+
+    public void renameFinished() {
+        this.renameFile = null;
+    }
 
     public UserItem(File file, boolean isDir) {
         this.file = file;
@@ -25,9 +40,9 @@ public class UserItem {
         this.temporaryName = temporaryName;
     }
 
-    public void generateFile(String name){
-        this.file = new File(patch + name);
-    }
+//    public void generateFile(String name){
+//        this.file = new File(patch + name);
+//    }
 
     public void setFile(File file){
         if (this.file == null){
@@ -53,6 +68,12 @@ public class UserItem {
 
     public File getFile() {
         return file;
+    }
+
+    public void renameFile(String newName) {
+        if(!file.getName().equals(newName)) {
+            file = file.toPath().resolveSibling(newName).toFile();
+        }
     }
 
     public File getLocalFile() {
