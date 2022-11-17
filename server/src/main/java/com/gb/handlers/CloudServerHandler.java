@@ -40,13 +40,11 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
     public void renameFile(ChannelHandlerContext channel, RenameFile renameFile) throws NotDirectoryException, IOException {
 
         Path path = renameFile.getFile().toPath();
-//        System.out.println(newCat);
-        if(!Files.exists(path)){
+        if(Files.exists(path)){
             if (path.getName(0).toString().equals("Root")){
                 if (path.getName(1).toString().equals("user1")){
 
-                    path = path.resolveSibling(renameFile.getNewFile().getName());
-
+                    renameFile.getFile().renameTo(renameFile.getNewFile());
                 }
             }
         }
