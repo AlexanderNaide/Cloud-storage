@@ -1,56 +1,99 @@
 package com.gb.controllers;
 
-import com.gb.classes.command.Catalog;
+import com.gb.classes.MyDir.MyDirectory;
+import com.gb.classes.MyDir.NotDirectoryException;
+import com.gb.classes.command.*;
 import com.gb.classes.Command;
-import com.gb.classes.command.TestCommand;
-import com.gb.classes.command.UpdateCatalog;
-import com.gb.net.Net;
-import com.gb.views.WindowTreeView;
+import com.gb.net.NettyNet;
+import com.gb.views.*;
+import io.netty.channel.ChannelHandlerContext;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import lombok.extern.slf4j.Slf4j;
 
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.Socket;
+import java.io.RandomAccessFile;
 import java.net.URL;
-import java.util.Collections;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.ResourceBundle;
 
-public class CloudWindowController implements Initializable {
-    public VBox VBoxHomeWindow;
+@Slf4j
+public class CloudWindowController extends WindowTreeView implements Initializable {
     public AnchorPane HomeWindow;
 
-    public WindowTreeView treeView;
+//    public WindowTreeView treeView;
+    public TextField interText;
 
-    private Net net;
+//    private Desktop desktop;
+
+    private FileChooser fileChooser;
+
+    private DirectoryChooser directoryChooser;
+
+//    private Net net;
+    private NettyNet net;
+
+
+    /**
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
+
+
+// TODO: 014 14.11.22 Необходимо добавить всплывающие сообщения: если файл удаляется, если удаляется дирректория, если скачиваемый файл уже есть, если качается дирректория
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        treeView = new WindowTreeView(VBoxHomeWindow);
+        super.initialize(this);
+        fileChooser = new FileChooser();
+        directoryChooser = new DirectoryChooser();
+//        desktop = Desktop.getDesktop();
 
-        try {
-            Socket socket = new Socket("localhost", 6830);
-            net = new Net(this::readCommand, socket);
-
-            Command c = new UpdateCatalog();
-            net.sendMessages(c);
-
-
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+        net = new NettyNet(this::readCommand);
     }
 
-    private void readCommand(Command com) {
-        if (com instanceof UpdateCatalog){
-            System.out.println(com.getName());
-        } else if (com instanceof Catalog){
+    public void sendMessages(Command command) {
+        net.sendMessages(command);
+    }
 
-            System.out.println(com.getClass());
-            System.out.println(((Catalog) com).getCatalog().toString());
-            treeView.updateView(((Catalog) com).getCatalog());
+    private void readCommand(Command command) {
+
+//        System.out.println(" Явообще что-то получаю? ");
+
+        log.debug("Received: {}", command);
+        if (command != null){
+            String com = command.getName();
+            switch (com) {
+                case "UpdateCatalog" -> System.out.println("Update catalog");
+                case "Test" -> System.out.println("Test");
+                case "myDirectory" -> updateViewNew((MyDirectory) command);
+                case "newFile" -> createNewFile((NewFile) command);
+            }
         }
+
+
+
+
 /*        Platform.runLater(() -> {
             statuses.getItems().add(message);
         });*/
@@ -63,19 +106,101 @@ public class CloudWindowController implements Initializable {
         */
     }
 
-
-    public void TestButton (ActionEvent actionEvent) {
-        TestCommand tc = new TestCommand();
-        net.sendMessages(tc);
+    public void createNewFile(NewFile newFile){
+        try {
+            Path createFile = Paths.get(newFile.getFile().getPath());
+            Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void UpdateList(ActionEvent actionEvent) {
         UpdateCatalog uc = new UpdateCatalog();
-        net.sendMessages(uc);
+        sendMessages(uc);
     }
 
     public void AddDirectory(ActionEvent actionEvent) {
-        String parent = treeView.getParentItem(actionEvent);
-        System.out.println(parent);
+
+        TreeItem<UserItem> parentItem = getParentItem();
+        TreeItem<UserItem> newItem = new TreeItem<>();
+//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
+        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
+        newItem.setGraphic(new ImageView(ico.getIco("cat")));
+        parentItem.getChildren().add(0, newItem);
+        parentItem.setExpanded(true);
+        setEditing(newItem);
+
+
+//        treeView.requestFocus();
+//        treeView.getFocusModel().focus(0);
+//        treeView.layout();
+//        treeView.edit(newItem);
+//        treeView.setEditable(true);
+
+    }
+
+
+    public void TextInsered(ActionEvent actionEvent) {
+    }
+
+    public void DeleteButton(ActionEvent actionEvent) {
+        TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
+        if (item != treeView.getRoot()){
+            File file = item.getValue().getFile();
+            DeleteFile del = new DeleteFile(file);
+            sendMessages(del);
+        }
+    }
+
+    public void AddFile(ActionEvent actionEvent) throws IOException {
+/*
+        Вот эта тема загружает Эксплорер в указанной папке
+
+        String onlyPath = "D:\\GAME OF Thrones";
+        String completeCmd = "explorer.exe /select," + onlyPath;
+        new ProcessBuilder(("explorer.exe " + completeCmd).split(" ")).start();
+        */
+//        new ProcessBuilder("explorer.exe").start(); // а вот конкретно так стартует библиотека пользователя
+
+
+        List<File> files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
+        TreeItem<UserItem> parentItem = super.getParentItem();
+        parentItem.setExpanded(true);
+        for (File file : files) {
+            try {
+//                byte[] dataByte = Files.readAllBytes(Paths.get(file.getPath()));
+                byte[] dataByte = Files.readAllBytes(file.toPath());
+                String newFileName = parentItem.getValue().getFile().getPath() + "\\" + file.getName();
+                NewFile newFie = new NewFile(new File(newFileName), dataByte);
+                sendMessages(newFie);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void DownloadButton(ActionEvent actionEvent) {
+        File dir = directoryChooser.showDialog(HomeWindow.getScene().getWindow());
+        ObservableList<TreeItem<UserItem>> list = treeView.getSelectionModel().getSelectedItems();
+        for (TreeItem<UserItem> userItemTreeItem : list) {
+            File file = userItemTreeItem.getValue().getFile();
+            sendMessages(new GetFile(file, dir.getPath()));
+        }
+    }
+
+    public void RenameButton(ActionEvent actionEvent) {
+//        TreeItem<UserItem> parentItem = getParentItem();
+//        TreeItem<UserItem> newItem = new TreeItem<>();
+//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
+
+
+        TreeItem<UserItem> newItem = treeView.getSelectionModel().getSelectedItem();
+        newItem.getValue().renameStarted();
+//        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
+//        newItem.setGraphic(new ImageView(ico.getIco("cat")));
+//        parentItem.getChildren().add(0, newItem);
+//        parentItem.setExpanded(true);
+        setEditing(newItem);
     }
 }

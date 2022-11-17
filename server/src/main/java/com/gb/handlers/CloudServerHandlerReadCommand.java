@@ -1,20 +1,20 @@
 package com.gb.handlers;
 
+import com.gb.classes.MyDir.MyDirectory;
+import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.MyMessage;
-import com.gb.classes.command.Catalog;
+import com.gb.classes.command.*;
 import com.gb.classes.Command;
-import com.gb.classes.command.TestCommand;
-import com.gb.classes.command.UpdateCatalog;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
-public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
+public class CloudServerHandlerReadCommand extends ChannelInboundHandlerAdapter {
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("Client connected...");
@@ -29,18 +29,32 @@ public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
 //            System.out.println(msg.getClass());
             if (msg instanceof Command){
                 if (msg instanceof UpdateCatalog){
-                    System.out.println("Клент хочет обновить каталог: ");
+                    System.out.println("Клент " + ctx.channel().id() + " хочет обновить каталог: ");
+
+                    /**    Вот это работает *******
+                     *
+                     *
+                     * Этот метод понадобится при регистрации нового пользователя.
+                     *
                     Catalog answer = createCatalog(ctx);
-//                    Catalog answer = createTestCatalog(ctx);
-//                    System.out.println("Новый каталог: " + answer.getClass());
-//                    Catalog answer = new Catalog();
-//                    createTestCatalog(ctx, answer);
-                    ctx.write(answer);
+                     */
+
+//                    Command answer = new MyDirectory(Paths.get("Root/user1").toFile());
+//                    ctx.write(answer);
+
+                    updateCatalog(ctx);
+
                     System.out.println("Каталог отправлен");
                 } else if (msg instanceof TestCommand) {
                     System.out.println("Пришло тест.");
                     TestCommand answer = new TestCommand();
                     ctx.write(answer);
+                } else if (msg instanceof NewCatalog) {
+                    System.out.println("Пришло \"Новый каталог\".");
+                    createNewCatalog(ctx, (NewCatalog) msg);
+                } else if (msg instanceof DeleteFile) {
+                    System.out.println("Пришло \"Удалить файл\".");
+                    deleteFile(ctx, (DeleteFile) msg);
                 }
 
             } else if (msg instanceof MyMessage) {
@@ -62,6 +76,37 @@ public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
         System.out.println("Тест каталог создан");
     }*/
 
+    public void updateCatalog(ChannelHandlerContext ctx) throws NotDirectoryException {
+        Command answer = new MyDirectory(Paths.get("Root/user1").toFile());
+        ctx.write(answer);
+    }
+
+    public void createNewCatalog(ChannelHandlerContext ctx, NewCatalog newCatalog) throws NotDirectoryException, IOException {
+
+        Path newCat = newCatalog.getFile().toPath();
+        System.out.println(newCat);
+        if(!Files.exists(newCat)){
+            if (newCat.getName(0).toString().equals("Root")){
+                if (newCat.getName(1).toString().equals("user1")){
+                    Files.createDirectory(newCat);
+                }
+            }
+        }
+        updateCatalog(ctx);
+    }
+
+    public void deleteFile(ChannelHandlerContext ctx, DeleteFile deleteFile) throws NotDirectoryException, IOException {
+
+        Path delF = deleteFile.getFile().toPath();
+        System.out.println(delF);
+        if (delF.getName(0).toString().equals("Root")){
+            if (delF.getName(1).toString().equals("user1")){
+                Files.deleteIfExists(delF);
+            }
+        }
+        updateCatalog(ctx);
+    }
+
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
@@ -78,8 +123,6 @@ public class CloudServerHandlerRadCommand extends ChannelInboundHandlerAdapter {
         Catalog catalog = new Catalog();
 //        final File[] path = new File[1];
         Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
-
-
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                 if (!dir.getFileName().toString().equals("user1")){
