@@ -6,14 +6,12 @@ import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.*;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import javafx.scene.control.TreeItem;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
 
 @Slf4j
 public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
@@ -54,7 +52,6 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
     public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
         Command answer = new MyDirectory(Paths.get("Root/user1").toFile());
         channel.writeAndFlush(answer);
-//        System.out.println("Новый каталог отправлен");
     }
 
     public void createNewCatalog(ChannelHandlerContext channel, NewCatalog newCatalog) throws NotDirectoryException, IOException {
@@ -142,7 +139,6 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
                 return FileVisitResult.CONTINUE;
             }
         });
-//        System.out.println("Каталог создан.");
         return catalog;
     }
 }
