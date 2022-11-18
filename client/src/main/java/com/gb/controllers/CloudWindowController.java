@@ -10,10 +10,13 @@ import io.netty.channel.ChannelHandlerContext;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,8 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
 //    public WindowTreeView treeView;
     public TextField interText;
+    public TextField loginField;
+    public TextField passField;
 
 //    private Desktop desktop;
 
@@ -88,6 +93,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
                 case "Test" -> System.out.println("Test");
                 case "myDirectory" -> updateViewNew((MyDirectory) command);
                 case "newFile" -> createNewFile((NewFile) command);
+                case "message" -> serverMessage((MyMessage) command);
             }
         }
 
@@ -140,17 +146,31 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
     }
 
-
-    public void TextInsered(ActionEvent actionEvent) {
-    }
-
     public void DeleteButton(ActionEvent actionEvent) {
         TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
         if (item != treeView.getRoot()){
-            File file = item.getValue().getFile();
-            DeleteFile del = new DeleteFile(file);
-            sendMessages(del);
+//            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//            Alert alert = new Alert(Alert.AlertType.ERROR, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//            Alert alert = new Alert(Alert.AlertType.NONE, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Удалить " + item.getValue() + " ?", ButtonType.CANCEL, ButtonType.YES);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.YES) {
+                File file = item.getValue().getFile();
+                DeleteFile del = new DeleteFile(file);
+                sendMessages(del);
+            }
         }
+    }
+
+    public void serverMessage(MyMessage command) {
+//            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//            Alert alert = new Alert(Alert.AlertType.ERROR, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//            Alert alert = new Alert(Alert.AlertType.NONE, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+        Alert alert = new Alert(Alert.AlertType.WARNING, command.getText(), ButtonType.YES);
+        alert.showAndWait();
+
     }
 
     public void AddFile(ActionEvent actionEvent) throws IOException {
@@ -202,5 +222,18 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 //        parentItem.getChildren().add(0, newItem);
 //        parentItem.setExpanded(true);
         setEditing(newItem);
+    }
+
+    public void Login(ActionEvent actionEvent) {
+        String login = loginField.getText();
+        String password = passField.getText();
+
+        if (login.isBlank() || password.isBlank()){
+            return;
+        }
+
+        UserConnect userConnect = new UserConnect(login, password);
+        sendMessages(userConnect);
+
     }
 }

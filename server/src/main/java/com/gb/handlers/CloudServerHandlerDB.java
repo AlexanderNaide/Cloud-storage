@@ -1,5 +1,6 @@
 package com.gb.handlers;
 
+import com.gb.OperatorBD;
 import com.gb.classes.Command;
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyDir.NotDirectoryException;
@@ -14,19 +15,14 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.*;
 
+import static com.gb.OperatorBD.*;
+
 @Slf4j
 public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
 
-    private static Statement statement;
-    private static Connection connection;
-
-    public CloudServerHandlerDB(Connection connection) throws SQLException {
-        CloudServerHandlerDB.connection = connection;
-        statement = connection.createStatement();
-    }
-
     @Override
     protected void channelRead0(ChannelHandlerContext channel, Command command) throws Exception {
+//        channelX = channel;
         log.debug("Received: {}", command);
         if (command != null){
             String com = command.getName();
@@ -45,22 +41,30 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
         }
     }
 
-    public void userConnect(ChannelHandlerContext channel, UserConnect userConnect) throws NotDirectoryException, SQLException {
-
-//        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO students (name, score) VALUES (?, ?)"); // - пример создания
-        PreparedStatement preparedStatement = connection.prepareStatement("select * from users where login = 'log1'");
-        preparedStatement.setString(1, "Bob");
-        preparedStatement.setInt(2, 3);
-
-        preparedStatement.execute();
-
-        ResultSet resultSet = statement.executeQuery("select * from users where login = 'log1'");
-
-
-        updateCatalog(channel);
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("channelUnregistered");
+        super.channelUnregistered(ctx);
     }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("channelInactive");
+        clearConnect(ctx);
+        super.channelInactive(ctx);
+    }
 
+    public void userConnect(ChannelHandlerContext channel, UserConnect userConnect) throws NotDirectoryException, SQLException {
+        if (userConnections(channel, userConnect)){
+            updateCatalog(channel);
+        }
+    }
 
     public void renameFile(ChannelHandlerContext channel, RenameFile renameFile) throws NotDirectoryException, IOException {
 
@@ -77,7 +81,7 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
     }
 
     public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
-        Command answer = new MyDirectory(Paths.get("Root/user1").toFile());
+        Command answer = new MyDirectory(Paths.get("Root/" + userCatalog(channel)).toFile());
         channel.writeAndFlush(answer);
     }
 

@@ -2,7 +2,7 @@ package com.gb.handlers;
 
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyDir.NotDirectoryException;
-import com.gb.classes.MyMessage;
+import com.gb.classes.command.MyMessage;
 import com.gb.classes.command.*;
 import com.gb.classes.Command;
 import io.netty.channel.ChannelHandlerContext;

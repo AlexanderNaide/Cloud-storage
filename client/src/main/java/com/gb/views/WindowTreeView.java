@@ -28,6 +28,8 @@ import static javafx.scene.control.TreeView.editCancelEvent;
 
 public class WindowTreeView {
 
+
+    protected Pane loginPane;
     protected CloudWindowController controller;
     public VBox VBoxHomeWindow;
     protected TreeView <UserItem> treeView;
@@ -171,7 +173,15 @@ public class WindowTreeView {
 //        treeView.setEditable(false);
     }
 
+
+
     public void updateViewNew(MyDirectory myDirectory) {
+
+        System.out.println(loginPane.isVisible());
+
+//        if (loginPane.isVisible()){
+//            loginPane.setVisible(false);
+//        }
 
 //        System.out.println("Обновляемся");
 

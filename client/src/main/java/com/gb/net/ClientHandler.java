@@ -18,9 +18,9 @@ public class ClientHandler extends SimpleChannelInboundHandler<Command> {
         messageReceived.onReceived(command);
     }
 
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
-        ctx.writeAndFlush(new UpdateCatalog());
-    }
+//    @Override
+//    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+//        super.channelActive(ctx);
+//        ctx.writeAndFlush(new UpdateCatalog());
+//    }
 }
