@@ -42,20 +42,7 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
     }
 
     @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
-        System.out.println("channelUnregistered");
-        super.channelUnregistered(ctx);
-    }
-
-    @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
-        System.out.println("channelInactive");
         clearConnect(ctx);
         super.channelInactive(ctx);
     }

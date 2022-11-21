@@ -4,11 +4,13 @@ import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.command.NewCatalog;
 import com.gb.classes.command.RenameFile;
 import com.gb.controllers.CloudWindowController;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -29,6 +31,7 @@ import static javafx.scene.control.TreeView.editCancelEvent;
 public class WindowTreeView {
 
 
+    @FXML
     protected Pane loginPane;
     protected CloudWindowController controller;
     public VBox VBoxHomeWindow;
@@ -38,9 +41,10 @@ public class WindowTreeView {
 
         this.controller = controller;
         treeView = new TreeView<UserItem>();
+        treeView.setVisible(false);
 //        treeView.setShowRoot(false);  // скрывает корневой каталог
-        this.VBoxHomeWindow.getChildren().add(treeView);
-        VBox.setVgrow(treeView, Priority.ALWAYS);
+//        this.VBoxHomeWindow.getChildren().add(treeView);
+//        VBox.setVgrow(treeView, Priority.ALWAYS);
         treeView.setPadding(new Insets(5.0));
         ico = new IconVer1();
         treeView.setRoot(new TreeItem<>(new UserItem("", true, "Home"), new ImageView(ico.getIco("home"))));
@@ -176,12 +180,15 @@ public class WindowTreeView {
 
 
     public void updateViewNew(MyDirectory myDirectory) {
-
-        System.out.println(loginPane.isVisible());
-
-//        if (loginPane.isVisible()){
-//            loginPane.setVisible(false);
-//        }
+        if (loginPane.isVisible()){
+            loginPane.setVisible(false);
+            loginPane.setPrefHeight(0);
+            Platform.runLater(() -> {
+                this.VBoxHomeWindow.getChildren().add(treeView);
+            });
+            VBox.setVgrow(treeView, Priority.ALWAYS);
+            treeView.setVisible(true);
+        }
 
 //        System.out.println("Обновляемся");
 
