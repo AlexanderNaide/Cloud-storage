@@ -50,7 +50,7 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
     }
 
     public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
-        Command answer = new MyDirectory(Paths.get("Root/user1").toFile());
+        Command answer = new MyDirectory("Root/", "log1");
         channel.writeAndFlush(answer);
     }
 

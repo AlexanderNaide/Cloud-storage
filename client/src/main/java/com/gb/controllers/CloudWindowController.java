@@ -7,6 +7,7 @@ import com.gb.classes.Command;
 import com.gb.net.NettyNet;
 import com.gb.views.*;
 import io.netty.channel.ChannelHandlerContext;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -65,7 +67,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
      */
 
 
-// TODO: 014 14.11.22 Необходимо добавить всплывающие сообщения: если файл удаляется, если удаляется дирректория, если скачиваемый файл уже есть, если качается дирректория
+// TODO: 014 14.11.22 РќРµРѕР±С…РѕРґРёРјРѕ РґРѕР±Р°РІРёС‚СЊ РІСЃРїР»С‹РІР°СЋС‰РёРµ СЃРѕРѕР±С‰РµРЅРёСЏ: РµСЃР»Рё С„Р°Р№Р» СѓРґР°Р»СЏРµС‚СЃСЏ, РµСЃР»Рё СѓРґР°Р»СЏРµС‚СЃСЏ РґРёСЂСЂРµРєС‚РѕСЂРёСЏ, РµСЃР»Рё СЃРєР°С‡РёРІР°РµРјС‹Р№ С„Р°Р№Р» СѓР¶Рµ РµСЃС‚СЊ, РµСЃР»Рё РєР°С‡Р°РµС‚СЃСЏ РґРёСЂСЂРµРєС‚РѕСЂРёСЏ
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -83,7 +85,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
     private void readCommand(Command command) {
 
-//        System.out.println(" Явообще что-то получаю? ");
+//        System.out.println(" РЇРІРѕРѕР±С‰Рµ С‡С‚Рѕ-С‚Рѕ РїРѕР»СѓС‡Р°СЋ? ");
 
         log.debug("Received: {}", command);
         if (command != null){
@@ -148,12 +150,13 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
     public void DeleteButton(ActionEvent actionEvent) {
         TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
+        System.out.println(item.getValue().getFile());
         if (item != treeView.getRoot()){
 //            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 //            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 //            Alert alert = new Alert(Alert.AlertType.ERROR, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 //            Alert alert = new Alert(Alert.AlertType.NONE, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Удалить " + item.getValue() + " ?", ButtonType.CANCEL, ButtonType.YES);
+            Alert alert = new Alert(Alert.AlertType.WARNING, "РЈРґР°Р»РёС‚СЊ " + item.getValue() + " ?", ButtonType.CANCEL, ButtonType.YES);
             alert.showAndWait();
             if (alert.getResult() == ButtonType.YES) {
                 File file = item.getValue().getFile();
@@ -164,24 +167,26 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     }
 
     public void serverMessage(MyMessage command) {
-//            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-//            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-//            Alert alert = new Alert(Alert.AlertType.ERROR, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-//            Alert alert = new Alert(Alert.AlertType.NONE, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-        Alert alert = new Alert(Alert.AlertType.WARNING, command.getText(), ButtonType.YES);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+//            Alert alert = new Alert(Alert.AlertType.WARNING, command.getText(), ButtonType.OK);
+//            Alert alert = new Alert(Alert.AlertType.WARNING, new String(command.getText().getBytes(StandardCharsets.UTF_8)), ButtonType.OK);
+            String answer = new String(command.getText().getBytes(StandardCharsets.UTF_8));
+            System.out.println(answer);
+            Alert alert = new Alert(Alert.AlertType.WARNING, answer, ButtonType.OK);
+            alert.showAndWait();
+        });
 
     }
 
     public void AddFile(ActionEvent actionEvent) throws IOException {
 /*
-        Вот эта тема загружает Эксплорер в указанной папке
+        Р’РѕС‚ СЌС‚Р° С‚РµРјР° Р·Р°РіСЂСѓР¶Р°РµС‚ Р­РєСЃРїР»РѕСЂРµСЂ РІ СѓРєР°Р·Р°РЅРЅРѕР№ РїР°РїРєРµ
 
         String onlyPath = "D:\\GAME OF Thrones";
         String completeCmd = "explorer.exe /select," + onlyPath;
         new ProcessBuilder(("explorer.exe " + completeCmd).split(" ")).start();
         */
-//        new ProcessBuilder("explorer.exe").start(); // а вот конкретно так стартует библиотека пользователя
+//        new ProcessBuilder("explorer.exe").start(); // Р° РІРѕС‚ РєРѕРЅРєСЂРµС‚РЅРѕ С‚Р°Рє СЃС‚Р°СЂС‚СѓРµС‚ Р±РёР±Р»РёРѕС‚РµРєР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 
 
         List<File> files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
@@ -235,6 +240,20 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
         UserConnect userConnect = new UserConnect(login, password);
         sendMessages(userConnect);
+
+    }
+
+    public void Registration(ActionEvent actionEvent) {
+
+        String login = loginField.getText();
+        String password = passField.getText();
+
+        if (login.isBlank() || password.isBlank()){
+            return;
+        }
+
+        UserCreate userCreate = new UserCreate(login, password);
+        sendMessages(userCreate);
 
     }
 }

@@ -1,10 +1,13 @@
 package com.gb.classes.MyDir;
 
 import com.gb.classes.Command;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.io.File;
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MyDirectory extends Command {
     @Serial
@@ -25,23 +28,37 @@ public class MyDirectory extends Command {
         return directories;
     }
 
-    public MyDirectory(File file) throws NotDirectoryException {
+    public MyDirectory(String root, String file) throws NotDirectoryException {
+
         this.name = "myDirectory";
-        this.catalogName = file;
+        this.catalogName = new File(file);
         this.files = new ArrayList<>();
         this.directories = new ArrayList<>();
-        updateDirectory(file);
+        updateDirectory(root, file);
     }
 
-    public void updateDirectory(File file) throws NotDirectoryException {
-        if (file.isDirectory()){
-            File[] ch = file.listFiles();
+/*    public MyDirectory(File file) throws NotDirectoryException {
+        this.name = "myDirectory";
+
+        this.catalogName = (Path.of(file.getParent()).relativize(file.toPath())).toFile();
+//        this.catalogName = (Path.of(file.getParent()).relativize(file.toPath())).toFile();
+        this.files = new ArrayList<>();
+        this.directories = new ArrayList<>();
+        System.out.println("file - " + file + "||| catalogName - " + catalogName);
+        updateDirectory(file);
+    }*/
+
+    public void updateDirectory(String root, String file) throws NotDirectoryException {
+        File dir;
+        if ((dir = new File(root + file)).isDirectory()){
+            File[] ch = dir.listFiles();
             assert ch != null;
             for (File f : ch){
+                Path of = Path.of(root);
                 if(f.isFile()){
-                    files.add(f);
+                    files.add((of.relativize(f.toPath())).toFile());
                 } else {
-                    directories.add(new MyDirectory(f));
+                    directories.add(new MyDirectory(root, (of.relativize(f.toPath())).toString()));
                 }
             }
         } else {

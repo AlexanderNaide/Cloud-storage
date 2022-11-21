@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -58,9 +59,17 @@
                         <Insets left="160.0" right="160.0" top="10.0" />
                     </VBox.margin>
                     <font>
-                        <Font name="Broadway" size="12.0" />
+                        <Font name="Broadway" size="14.0" />
                     </font>
                 </Button>
+            <Hyperlink alignment="CENTER" contentDisplay="CENTER" onAction="#Registration" prefHeight="26.0" prefWidth="210.0" text="Registration" textAlignment="CENTER">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="160.0" right="160.0" />
+               </VBox.margin>
+            </Hyperlink>
             </VBox>
         </Pane>
     </VBox>

@@ -42,7 +42,7 @@ public class WindowTreeView {
         this.controller = controller;
         treeView = new TreeView<UserItem>();
         treeView.setVisible(false);
-//        treeView.setShowRoot(false);  // скрывает корневой каталог
+//        treeView.setShowRoot(false);  // СЃРєСЂС‹РІР°РµС‚ РєРѕСЂРЅРµРІРѕР№ РєР°С‚Р°Р»РѕРі
 //        this.VBoxHomeWindow.getChildren().add(treeView);
 //        VBox.setVgrow(treeView, Priority.ALWAYS);
         treeView.setPadding(new Insets(5.0));
@@ -131,7 +131,7 @@ public class WindowTreeView {
         treeView.getRoot().setExpanded(true);
     }
         protected String readTemporaryName(TreeItem<UserItem> item){
-            String name = "Новая папка";
+            String name = "РќРѕРІР°СЏ РїР°РїРєР°";
             String newName = name;
             boolean x = false;
             int n = 2;
@@ -190,9 +190,11 @@ public class WindowTreeView {
             treeView.setVisible(true);
         }
 
-//        System.out.println("Обновляемся");
+//        System.out.println("РћР±РЅРѕРІР»СЏРµРјСЃСЏ");
 
         treeView.getRoot().getValue().setFile(myDirectory.getCatalog());
+        treeView.getRoot().getValue().setOwner(myDirectory.getCatalog().getName());
+
         TreeItem<UserItem> newUserCatalog = new TreeItem<>(new UserItem(myDirectory.getCatalog(), true));
         newUserCatalog.getChildren().addAll(updateViewCat(myDirectory).getChildren());
         updateExpanded(newUserCatalog.getChildren(), treeView.getRoot().getChildren());

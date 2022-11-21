@@ -17,14 +17,14 @@ public class ServerConsole {
 
         Catalog catalog = new Catalog();
 
-        Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
-
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                catalog.add(file);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+//        Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
+//
+//            @Override
+//            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+//                catalog.add(file);
+//                return FileVisitResult.CONTINUE;
+//            }
+//        });
 
         catalog.getCatalog().forEach((k) -> {
             Path path1 = k.toPath();
@@ -40,7 +40,9 @@ public class ServerConsole {
         System.out.println("*************************************");
 
 
-        MyDirectory md = new MyDirectory(home.toFile());
+        MyDirectory md = new MyDirectory("Root/", "log1");
+
+
 
 /*        md.readDirectory((d, c) -> {
             System.out.println("name - " + d.getCatalog().getName());

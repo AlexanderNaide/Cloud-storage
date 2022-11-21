@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.sql.*;
 
 import static com.gb.OperatorBD.*;
 
@@ -28,6 +28,7 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
             String com = command.getName();
             switch (com) {
                 case "userConnect" -> userConnect(channel, (UserConnect) command);
+                case "userCreate" -> userCreate(channel, (UserCreate) command);
                 case "UpdateCatalog" -> updateCatalog(channel);
                 case "Test" -> System.out.println("Test");
                 case "newCatalog" -> createNewCatalog(channel, (NewCatalog) command);
@@ -47,66 +48,56 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
         super.channelInactive(ctx);
     }
 
-    public void userConnect(ChannelHandlerContext channel, UserConnect userConnect) throws NotDirectoryException, SQLException {
+    public void userConnect(ChannelHandlerContext channel, UserConnect userConnect) throws NotDirectoryException {
         if (userConnections(channel, userConnect)){
             updateCatalog(channel);
         }
     }
 
-    public void renameFile(ChannelHandlerContext channel, RenameFile renameFile) throws NotDirectoryException, IOException {
+    public void userCreate(ChannelHandlerContext channel, UserCreate userCreate) throws NotDirectoryException, IOException {
+        if (newUser(userCreate, "Root/")){
+            createCatalog("Root/" + userCreate.getLogin());
+            userConnect(channel, new UserConnect(userCreate.getLogin(), userCreate.getPassword()));
+        } else {
+            channel.writeAndFlush(new MyMessage(new String("Пользователь с таким логином уже существует.".getBytes(StandardCharsets.UTF_8))));
+        }
+    }
 
-        Path path = renameFile.getFile().toPath();
+    public void renameFile(ChannelHandlerContext channel, RenameFile renameFile) throws NotDirectoryException {
+        Path path = Path.of(OperatorBD.userRootCatalog(channel) + renameFile.getFile().toPath());
         if(Files.exists(path)){
-            if (path.getName(0).toString().equals("Root")){
-                if (path.getName(1).toString().equals("user1")){
-
-                    renameFile.getFile().renameTo(renameFile.getNewFile());
-                }
-            }
+            path.toFile().renameTo(Path.of(userRootCatalog(channel) + renameFile.getNewFile().getPath()).toFile());
         }
         updateCatalog(channel);
     }
 
     public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
-        Command answer = new MyDirectory(Paths.get("Root/" + userCatalog(channel)).toFile());
+        Command answer = new MyDirectory(userRootCatalog(channel), userCatalog(channel));
         channel.writeAndFlush(answer);
     }
 
     public void createNewCatalog(ChannelHandlerContext channel, NewCatalog newCatalog) throws NotDirectoryException, IOException {
-
-        Path newCat = newCatalog.getFile().toPath();
-//        System.out.println(newCat);
+        Path newCat = Path.of(OperatorBD.userRootCatalog(channel) + newCatalog.getFile().toPath());
         if(!Files.exists(newCat)){
-            if (newCat.getName(0).toString().equals("Root")){
-                if (newCat.getName(1).toString().equals("user1")){
-                    Files.createDirectory(newCat);
-                }
-            }
+            Files.createDirectory(newCat);
         }
         updateCatalog(channel);
     }
 
     public void createNewFile(ChannelHandlerContext channel, NewFile newFile) throws NotDirectoryException, IOException {
-
-        Path createFile = newFile.getFile().toPath();
-//        System.out.println(newCat);
+        Path createFile = Path.of(OperatorBD.userRootCatalog(channel) + newFile.getFile().toPath());
         if(!Files.exists(createFile)){
-            if (createFile.getName(0).toString().equals("Root")){
-                if (createFile.getName(1).toString().equals("user1")){
-                    Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
-                }
-            }
+            Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
         }
         updateCatalog(channel);
     }
 
 
     public void getFile(ChannelHandlerContext channel, GetFile getFile) throws NotDirectoryException, IOException {
-
-        File file = getFile.getFile();
-        if(!file.isDirectory()){
-            File answerFile = new File(getFile.getTargetDir() + "\\" + file.getName());
-            byte[] dataByte = Files.readAllBytes(file.toPath());
+        Path file = (Path.of(OperatorBD.userRootCatalog(channel) + getFile.getFile().toPath()));
+        if(!file.toFile().isDirectory()){
+            File answerFile = new File(getFile.getTargetDir() + "\\" + file.getFileName());
+            byte[] dataByte = Files.readAllBytes(file);
             Command answer = new NewFile(answerFile, dataByte);
             channel.writeAndFlush(answer);
         }
@@ -114,49 +105,25 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
     }
 
     public void deleteFile(ChannelHandlerContext channel, DeleteFile deleteFile) throws NotDirectoryException, IOException {
-
-        Path delF = deleteFile.getFile().toPath();
-//        System.out.println(delF);
-        if (delF.getName(0).toString().equals("Root")){
-            if (delF.getName(1).toString().equals("user1")){
-                Files.walkFileTree(deleteFile.getFile().toPath(), new SimpleFileVisitor<>(){
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        Files.delete(file);
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                        Files.delete(dir);
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-//                Files.deleteIfExists(delF);
-            }
-        }
-        updateCatalog(channel);
-    }
-
-    private Catalog createCatalog(ChannelHandlerContext channel) throws IOException {
-        Path home = Paths.get( "root/" + "user1");
-        Catalog catalog = new Catalog();
-//        final File[] path = new File[1];
-        Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
+        Path delF = Path.of(OperatorBD.userRootCatalog(channel) + deleteFile.getFile().toPath());
+        Files.walkFileTree(delF, new SimpleFileVisitor<>(){
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                if (!dir.getFileName().toString().equals("user1")){
-                    catalog.add(dir);
-                }
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                catalog.add(file);
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
                 return FileVisitResult.CONTINUE;
             }
         });
-        return catalog;
+        updateCatalog(channel);
+    }
+
+    private void createCatalog(String dir) throws IOException {
+        Path home = Path.of(dir);
+        Files.createDirectory(home);
     }
 }

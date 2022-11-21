@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerStart {
 
     public static void main(String[] args) {
+        OperatorBD.clearAllConnects();
         EventLoopGroup auth = new NioEventLoopGroup(1);
         EventLoopGroup worker = new NioEventLoopGroup();
         try{
@@ -38,7 +39,7 @@ public class ServerStart {
             log.debug("Server started...");
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            System.err.println("Что-то случилось");
+            System.err.println("Р§С‚Рѕ-С‚Рѕ СЃР»СѓС‡РёР»РѕСЃСЊ");
             log.error("e=", e);
         } finally {
             OperatorBD.clearAllConnects();
