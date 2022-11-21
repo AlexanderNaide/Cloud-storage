@@ -36,10 +36,15 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
                 case "newFile" -> createNewFile(channel, (NewFile) command);
                 case "getFile" -> getFile(channel, (GetFile) command);
                 case "renameFile" -> renameFile(channel, (RenameFile) command);
+                case "userDisconnect" -> disconnectUser(channel);
             }
         } else {
 //            channel.writeAndFlush(command);
         }
+    }
+
+    private void disconnectUser(ChannelHandlerContext channel) {
+        clearConnect(channel);
     }
 
     @Override
@@ -49,9 +54,11 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
     }
 
     public void userConnect(ChannelHandlerContext channel, UserConnect userConnect) throws NotDirectoryException {
-        if (userConnections(channel, userConnect)){
-            updateCatalog(channel);
-        }
+        userConnections(channel, userConnect);
+        updateCatalog(channel);
+
+//        channel.channel().pipeline().get();
+
     }
 
     public void userCreate(ChannelHandlerContext channel, UserCreate userCreate) throws NotDirectoryException, IOException {

@@ -36,6 +36,10 @@ public class WindowTreeView {
     protected CloudWindowController controller;
     public VBox VBoxHomeWindow;
     protected TreeView <UserItem> treeView;
+    @FXML
+    public ButtonBar buttonBar;
+    @FXML
+    public Hyperlink logOutPanel;
     protected Ico ico;
     public void initialize(CloudWindowController controller) {
 
@@ -46,6 +50,7 @@ public class WindowTreeView {
 //        this.VBoxHomeWindow.getChildren().add(treeView);
 //        VBox.setVgrow(treeView, Priority.ALWAYS);
         treeView.setPadding(new Insets(5.0));
+        this.VBoxHomeWindow.getChildren().add(treeView);
         ico = new IconVer1();
         treeView.setRoot(new TreeItem<>(new UserItem("", true, "Home"), new ImageView(ico.getIco("home"))));
 
@@ -177,17 +182,36 @@ public class WindowTreeView {
 //        treeView.setEditable(false);
     }
 
+    public void windowCatalogIn(){
+        loginPane.setVisible(false);
+        loginPane.setPrefHeight(0);
+        Platform.runLater(() -> {
+//            this.VBoxHomeWindow.getChildren().add(treeView);
+            logOutPanel.setVisible(true);
+            buttonBar.setVisible(true);
+        });
+        VBox.setVgrow(treeView, Priority.ALWAYS);
+        treeView.setVisible(true);
+    }
+
+    public void windowCatalogOut(){
+
+        Platform.runLater(() -> {
+//            this.VBoxHomeWindow.getChildren().add(treeView);
+            treeView.setVisible(false);
+            logOutPanel.setVisible(false);
+            buttonBar.setVisible(false);
+            loginPane.setVisible(true);
+            loginPane.setPrefHeight(569);
+        });
+//        VBox.setVgrow(treeView, Priority.ALWAYS);
+    }
+
 
 
     public void updateViewNew(MyDirectory myDirectory) {
         if (loginPane.isVisible()){
-            loginPane.setVisible(false);
-            loginPane.setPrefHeight(0);
-            Platform.runLater(() -> {
-                this.VBoxHomeWindow.getChildren().add(treeView);
-            });
-            VBox.setVgrow(treeView, Priority.ALWAYS);
-            treeView.setVisible(true);
+            windowCatalogIn();
         }
 
 //        System.out.println("Обновляемся");

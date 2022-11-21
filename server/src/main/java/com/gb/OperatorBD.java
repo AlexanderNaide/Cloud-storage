@@ -15,14 +15,15 @@ public class OperatorBD {
     static {
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\GVoichuk\\IdeaProjects\\Cloud-Storage\\server\\src\\main\\resources\\CloudStorageDB.db");
+//            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\GVoichuk\\IdeaProjects\\Cloud-Storage\\server\\src\\main\\resources\\CloudStorageDB.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\al121\\IdeaProjects\\Cloud-Storage\\server\\src\\main\\resources\\CloudStorageDB.db");
             statement = connection.createStatement();
         } catch (ClassNotFoundException | SQLException e) {
             log.error("e=", e);
         }
     }
 
-    public static boolean userConnections(ChannelHandlerContext channel, UserConnect userConnect) {
+    public static void userConnections(ChannelHandlerContext channel, UserConnect userConnect) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("select userID from users where login = ? and password = ?");
             preparedStatement.setString(1, userConnect.getLogin());
@@ -30,14 +31,31 @@ public class OperatorBD {
             ResultSet resultSet = preparedStatement.executeQuery();
             int userID = resultSet.getInt(1);
             String ch = String.valueOf(channel.channel().id());
-            if (userID != 0) {
-                statement.executeUpdate(String.format("insert into connect (userID, channelID) values (%d, '%s')", userID, ch));
-                return true;
-            }
+
+            statement.executeUpdate(String.format("insert into connect (userID, channelID) values (%d, '%s')", userID, ch));
+
+
+/*            if (userID != 0) {
+                System.out.println("userID = " + userID);
+                ResultSet rs = statement.executeQuery(String.format("select channelID from connect where userID = %d", userID));
+                System.out.println(rs.getInt(1));
+
+                if (rs.getInt(1) != 0){
+                    statement.executeUpdate(String.format("insert into connect (userID, channelID) values (%d, '%s')", userID, ch));
+                    System.out.println("Этот юзер залогинен");
+                    return rs.getString(1);
+                } else {
+                    statement.executeUpdate(String.format("insert into connect (userID, channelID) values (%d, '%s')", userID, ch));
+                    System.out.println("Этот юзер НЕзалогинен");
+                    return "0";
+                }
+            }*/
+
+
         } catch (SQLException e) {
             log.error("e=", e);
         }
-        return false;
+//        return null;
     }
 
     public static String userCatalog(ChannelHandlerContext channel) {

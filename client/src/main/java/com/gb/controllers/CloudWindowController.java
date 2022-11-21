@@ -11,10 +11,8 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -47,7 +45,6 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     public TextField passField;
 
 //    private Desktop desktop;
-
     private FileChooser fileChooser;
 
     private DirectoryChooser directoryChooser;
@@ -96,11 +93,9 @@ public class CloudWindowController extends WindowTreeView implements Initializab
                 case "myDirectory" -> updateViewNew((MyDirectory) command);
                 case "newFile" -> createNewFile((NewFile) command);
                 case "message" -> serverMessage((MyMessage) command);
+                case "userDisconnect" -> windowCatalogOut();
             }
         }
-
-
-
 
 /*        Platform.runLater(() -> {
             statuses.getItems().add(message);
@@ -255,5 +250,10 @@ public class CloudWindowController extends WindowTreeView implements Initializab
         UserCreate userCreate = new UserCreate(login, password);
         sendMessages(userCreate);
 
+    }
+
+    public void Logout(ActionEvent actionEvent) {
+        windowCatalogOut();
+        sendMessages(new UserDisconnect());
     }
 }
