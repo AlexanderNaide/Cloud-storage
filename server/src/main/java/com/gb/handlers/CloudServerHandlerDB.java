@@ -59,7 +59,8 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
             createCatalog("Root/" + userCreate.getLogin());
             userConnect(channel, new UserConnect(userCreate.getLogin(), userCreate.getPassword()));
         } else {
-            channel.writeAndFlush(new MyMessage(new String("Пользователь с таким логином уже существует.".getBytes(StandardCharsets.UTF_8))));
+//            channel.writeAndFlush(new MyMessage(new String("Пользователь с таким логином уже существует.".getBytes(StandardCharsets.UTF_8))));
+            channel.writeAndFlush(new MyMessage("A user with this username already exists."));
         }
     }
 

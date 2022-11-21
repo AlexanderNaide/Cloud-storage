@@ -167,12 +167,12 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     }
 
     public void serverMessage(MyMessage command) {
+//        String answer = new String(command.getText().getBytes(StandardCharsets.UTF_8));
+//        System.out.println(answer);
         Platform.runLater(() -> {
-//            Alert alert = new Alert(Alert.AlertType.WARNING, command.getText(), ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.WARNING, command.getText(), ButtonType.OK);
+//            Alert alert = new Alert(Alert.AlertType.WARNING, answer, ButtonType.OK);
 //            Alert alert = new Alert(Alert.AlertType.WARNING, new String(command.getText().getBytes(StandardCharsets.UTF_8)), ButtonType.OK);
-            String answer = new String(command.getText().getBytes(StandardCharsets.UTF_8));
-            System.out.println(answer);
-            Alert alert = new Alert(Alert.AlertType.WARNING, answer, ButtonType.OK);
             alert.showAndWait();
         });
 
@@ -182,7 +182,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 /*
         Вот эта тема загружает Эксплорер в указанной папке
 
-        String onlyPath = "D:\\GAME OF Thrones";
+        String onlyPath = "D:\\";
         String completeCmd = "explorer.exe /select," + onlyPath;
         new ProcessBuilder(("explorer.exe " + completeCmd).split(" ")).start();
         */

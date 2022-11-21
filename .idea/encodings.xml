@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" defaultCharsetForPropertiesFiles="windows-1251">
-    <file url="file://$PROJECT_DIR$/client/src/main/java/com/gb/Client.java" charset="windows-1251" />
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/client/src/main/java/com/gb/Client.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/client/src/main/java/com/gb/controllers/CloudWindowController.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/client/src/main/java/com/gb/views/WindowTreeView.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/common/src/main/java/com/gb/classes/command/MyMessage.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/ServerConsole.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/common/src/main/java/com/gb/classes/command/MyMessage.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/ServerConsole.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/ServerStart.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/handlers/CloudServerHandler.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/handlers/CloudServerHandlerOld.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/handlers/CloudServerHandlerReadCommand.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/handlers/CloudServerHandler.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/handlers/CloudServerHandlerOld.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/server/src/main/java/com/gb/handlers/CloudServerHandlerReadCommand.java" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
