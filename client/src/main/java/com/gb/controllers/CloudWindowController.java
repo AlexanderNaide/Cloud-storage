@@ -1,5 +1,6 @@
 package com.gb.controllers;
 
+import com.gb.classes.MyDir.CloudCatalog;
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.*;
@@ -14,8 +15,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
@@ -36,53 +37,32 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 @Slf4j
-public class CloudWindowController extends WindowTreeView implements Initializable {
+public class CloudWindowController extends WindowTilePane implements Initializable {
     public AnchorPane HomeWindow;
-
-//    public WindowTreeView treeView;
-    public TextField interText;
     public TextField loginField;
     public TextField passField;
-
-//    private Desktop desktop;
     private FileChooser fileChooser;
-
     private DirectoryChooser directoryChooser;
-
-//    private Net net;
-    private NettyNet net;
-
-
-    /**
-     * @param location
-     * The location used to resolve relative paths for the root object, or
-     * {@code null} if the location is not known.
-     *
-     * @param resources
-     * The resources used to localize the root object, or {@code null} if
-     * the root object was not localized.
-     */
-
-
-// TODO: 014 14.11.22 Необходимо добавить всплывающие сообщения: если файл удаляется, если удаляется дирректория, если скачиваемый файл уже есть, если качается дирректория
+    private static NettyNet net;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(this);
+        interactiveWindow.getStylesheets().add("com/gb/style.css");
         fileChooser = new FileChooser();
         directoryChooser = new DirectoryChooser();
-//        desktop = Desktop.getDesktop();
-
         net = new NettyNet(this::readCommand);
     }
 
-    public void sendMessages(Command command) {
+/*    public void sendMessages(Command command) {
+        net.sendMessages(command);
+    }*/
+
+    public static void sendMessages(Command command) {
         net.sendMessages(command);
     }
 
     private void readCommand(Command command) {
-
-//        System.out.println(" Явообще что-то получаю? ");
 
         log.debug("Received: {}", command);
         if (command != null){
@@ -91,9 +71,10 @@ public class CloudWindowController extends WindowTreeView implements Initializab
                 case "UpdateCatalog" -> System.out.println("Update catalog");
                 case "Test" -> System.out.println("Test");
                 case "myDirectory" -> updateViewNew((MyDirectory) command);
+                case "cloudCatalog" -> updateCatalog((CloudCatalog) command);
                 case "newFile" -> createNewFile((NewFile) command);
                 case "message" -> serverMessage((MyMessage) command);
-                case "userDisconnect" -> windowCatalogOut();
+                case "userDisconnect" -> windowLogin();
             }
         }
 
@@ -127,19 +108,11 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
         TreeItem<UserItem> parentItem = getParentItem();
         TreeItem<UserItem> newItem = new TreeItem<>();
-//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
         newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
         newItem.setGraphic(new ImageView(ico.getIco("cat")));
         parentItem.getChildren().add(0, newItem);
         parentItem.setExpanded(true);
         setEditing(newItem);
-
-
-//        treeView.requestFocus();
-//        treeView.getFocusModel().focus(0);
-//        treeView.layout();
-//        treeView.edit(newItem);
-//        treeView.setEditable(true);
 
     }
 
@@ -162,15 +135,12 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     }
 
     public void serverMessage(MyMessage command) {
-//        String answer = new String(command.getText().getBytes(StandardCharsets.UTF_8));
-//        System.out.println(answer);
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.WARNING, command.getText(), ButtonType.OK);
 //            Alert alert = new Alert(Alert.AlertType.WARNING, answer, ButtonType.OK);
 //            Alert alert = new Alert(Alert.AlertType.WARNING, new String(command.getText().getBytes(StandardCharsets.UTF_8)), ButtonType.OK);
             alert.showAndWait();
         });
-
     }
 
     public void AddFile(ActionEvent actionEvent) throws IOException {
@@ -189,7 +159,6 @@ public class CloudWindowController extends WindowTreeView implements Initializab
         parentItem.setExpanded(true);
         for (File file : files) {
             try {
-//                byte[] dataByte = Files.readAllBytes(Paths.get(file.getPath()));
                 byte[] dataByte = Files.readAllBytes(file.toPath());
                 String newFileName = parentItem.getValue().getFile().getPath() + "\\" + file.getName();
                 NewFile newFie = new NewFile(new File(newFileName), dataByte);
@@ -210,17 +179,8 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     }
 
     public void RenameButton(ActionEvent actionEvent) {
-//        TreeItem<UserItem> parentItem = getParentItem();
-//        TreeItem<UserItem> newItem = new TreeItem<>();
-//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
-
-
         TreeItem<UserItem> newItem = treeView.getSelectionModel().getSelectedItem();
         newItem.getValue().renameStarted();
-//        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
-//        newItem.setGraphic(new ImageView(ico.getIco("cat")));
-//        parentItem.getChildren().add(0, newItem);
-//        parentItem.setExpanded(true);
         setEditing(newItem);
     }
 
@@ -228,11 +188,9 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
         String login = loginField.getText();
         String password = passField.getText();
-
         if (login.isBlank() || password.isBlank()){
             return;
         }
-
         UserConnect userConnect = new UserConnect(login, password);
         sendMessages(userConnect);
 
@@ -253,7 +211,14 @@ public class CloudWindowController extends WindowTreeView implements Initializab
     }
 
     public void Logout(ActionEvent actionEvent) {
-        windowCatalogOut();
+        windowLogin();
         sendMessages(new UserDisconnect());
+    }
+
+    public void mouseClicked(MouseEvent mouseEvent) {
+//        if (mouseEvent.getClickCount() == 2){
+//
+////            sendMessages(new GetCatalog(currentDir));
+//        }
     }
 }

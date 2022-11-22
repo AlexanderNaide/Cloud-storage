@@ -2,7 +2,6 @@ package com.gb.handlers;
 
 import com.gb.OperatorBD;
 import com.gb.classes.Command;
-import com.gb.classes.MyDir.CloudCatalog;
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.*;
@@ -12,14 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import static com.gb.OperatorBD.*;
 
 @Slf4j
-public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
+public class CloudServerHandlerDBOld extends SimpleChannelInboundHandler<Command> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channel, Command command) throws Exception {
@@ -30,7 +28,7 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
             switch (com) {
                 case "userConnect" -> userConnect(channel, (UserConnect) command);
                 case "userCreate" -> userCreate(channel, (UserCreate) command);
-                case "UpdateCatalog", "getCatalog" -> updateCatalog(channel);
+                case "UpdateCatalog" -> updateCatalog(channel);
                 case "Test" -> System.out.println("Test");
                 case "newCatalog" -> createNewCatalog(channel, (NewCatalog) command);
                 case "deleteFile" -> deleteFile(channel, (DeleteFile) command);
@@ -81,17 +79,8 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
         updateCatalog(channel);
     }
 
-    /**
-     * Вот тут смотреть!!!!!!!!!! Как создать каталог из присланного файла
-     *
-     *
-     * @param channel
-     * @throws NotDirectoryException
-     */
-
     public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
-//        Command answer = new MyDirectory(userRootCatalog(channel), userCatalog(channel));
-        Command answer = new CloudCatalog(userRootCatalog(channel), userCatalog(channel));
+        Command answer = new MyDirectory(userRootCatalog(channel), userCatalog(channel));
         channel.writeAndFlush(answer);
     }
 
