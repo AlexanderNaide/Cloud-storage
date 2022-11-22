@@ -2,6 +2,7 @@ package com.gb.views;
 
 import com.gb.classes.MyDir.CloudCatalog;
 import com.gb.classes.MyDir.MyDirectory;
+import com.gb.classes.command.GetCatalog;
 import com.gb.classes.command.NewCatalog;
 import com.gb.classes.command.RenameFile;
 import com.gb.controllers.CloudWindowController;
@@ -10,10 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -45,7 +43,11 @@ public class WindowTilePane {
     public TilePane workingWindow;
     @FXML
     public HBox quickMenu;
+    @FXML
+    protected HBox desktopIcons;
+
     protected Ico ico;
+    protected Ico desktopIco;
     protected File currentDir;
     List<Node> list;
     public void initialize(CloudWindowController controller) {
@@ -53,8 +55,16 @@ public class WindowTilePane {
         this.controller = controller;
         windowLogin();
         ico = new IconLarge();
+        desktopIco = new IcoDesctop();
 
         list = workingWindow.getChildren();
+
+        ImageView up =  new ImageView(desktopIco.getIco("up"));
+        up.setOnMouseClicked(event -> {
+            this.controller.sendMessages(new GetCatalog(this.currentDir.getParent() == null ? this.currentDir : new File(this.currentDir.getParent())));
+        });
+        desktopIcons.getChildren().add(up);
+
 
 //        loginWindow.setPrefHeight(400);
 
@@ -86,9 +96,9 @@ public class WindowTilePane {
 
 
             if (userItem.isRename() == null){
-                controller.sendMessages(new NewCatalog(userItem.getFile()));
+                this.controller.sendMessages(new NewCatalog(userItem.getFile()));
             } else {
-                controller.sendMessages(new RenameFile(userItem.isRename(), userItem.getFile()));
+                this.controller.sendMessages(new RenameFile(userItem.isRename(), userItem.getFile()));
                 userItem.renameFinished();
             }
 
@@ -172,9 +182,10 @@ public class WindowTilePane {
             workingWindow.setPrefHeight(800);
 //            workingWindow.setPrefHeight(USE_COMPUTED_SIZE);
 //            VBox.setMargin(workingWindow, new Insets(0));
-            workingWindow.setPadding(new Insets(10));
-            workingWindow.setHgap(20);
-            workingWindow.setVgap(30);
+//            workingWindow.setPadding(new Insets(10));
+            workingWindow.setHgap(30);
+            workingWindow.setVgap(20);
+            workingWindow.setPadding(new Insets(10, 20, 10, 20));
 
         });
     }
@@ -244,10 +255,10 @@ public class WindowTilePane {
         currentDir = command.getCatalog();
         list = new ArrayList<>();
         for (File directory : command.getDirectories()) {
-            list.add(new Large(new ImageView(ico.getIco("cat")), directory));
+            list.add(new Large(new ImageView(ico.getIco("cat")), directory, controller::sendMessages));
         }
         for (File file : command.getFiles()) {
-            list.add(new Large(new ImageView(ico.getIco("file")), file));
+            list.add(new Large(new ImageView(ico.getIco("file")), file, controller::sendMessages));
         }
         Platform.runLater(() -> {
             workingWindow.getChildren().remove(0, workingWindow.getChildren().size());

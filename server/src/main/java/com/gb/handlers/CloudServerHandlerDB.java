@@ -30,12 +30,13 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
             switch (com) {
                 case "userConnect" -> userConnect(channel, (UserConnect) command);
                 case "userCreate" -> userCreate(channel, (UserCreate) command);
-                case "UpdateCatalog", "getCatalog" -> updateCatalog(channel);
+                case "UpdateCatalog" -> updateCatalog(channel);
                 case "Test" -> System.out.println("Test");
                 case "newCatalog" -> createNewCatalog(channel, (NewCatalog) command);
                 case "deleteFile" -> deleteFile(channel, (DeleteFile) command);
                 case "newFile" -> createNewFile(channel, (NewFile) command);
                 case "getFile" -> getFile(channel, (GetFile) command);
+                case "getCatalog" -> getCatalog(channel, (GetCatalog) command);
                 case "renameFile" -> renameFile(channel, (RenameFile) command);
                 case "userDisconnect" -> disconnectUser(channel);
             }
@@ -81,13 +82,10 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
         updateCatalog(channel);
     }
 
-    /**
-     * Вот тут смотреть!!!!!!!!!! Как создать каталог из присланного файла
-     *
-     *
-     * @param channel
-     * @throws NotDirectoryException
-     */
+    public void getCatalog(ChannelHandlerContext channel, GetCatalog command) throws NotDirectoryException {
+        Command answer = new CloudCatalog(userRootCatalog(channel), command.getFile().getPath());
+        channel.writeAndFlush(answer);
+    }
 
     public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
 //        Command answer = new MyDirectory(userRootCatalog(channel), userCatalog(channel));

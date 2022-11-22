@@ -54,13 +54,13 @@ public class CloudWindowController extends WindowTilePane implements Initializab
         net = new NettyNet(this::readCommand);
     }
 
-/*    public void sendMessages(Command command) {
-        net.sendMessages(command);
-    }*/
-
-    public static void sendMessages(Command command) {
+    public void sendMessages(Command command) {
         net.sendMessages(command);
     }
+
+/*    public static void sendMessages(Command command) {
+        net.sendMessages(command);
+    }*/
 
     private void readCommand(Command command) {
 
@@ -215,10 +215,5 @@ public class CloudWindowController extends WindowTilePane implements Initializab
         sendMessages(new UserDisconnect());
     }
 
-    public void mouseClicked(MouseEvent mouseEvent) {
-//        if (mouseEvent.getClickCount() == 2){
-//
-////            sendMessages(new GetCatalog(currentDir));
-//        }
-    }
+
 }
