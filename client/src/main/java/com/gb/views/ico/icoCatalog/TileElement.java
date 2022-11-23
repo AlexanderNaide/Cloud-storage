@@ -1,7 +1,8 @@
-package com.gb.views;
+package com.gb.views.ico.icoCatalog;
 
 import com.gb.classes.command.GetCatalog;
 import com.gb.net.MessageReceived;
+import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import java.io.File;
 
@@ -15,6 +16,13 @@ public class TileElement extends VBox {
         this.file = file;
         this.received = received;
         this.setOnMouseClicked(event -> {
+            boolean f = this.isFocused();
+            this.getParent().getChildrenUnmodifiable();
+
+            for ( (TileElement) t: this.getParent().getChildrenUnmodifiable()) {
+
+            }
+            this.setFocused(!f);
             if (event.getClickCount() == 2){
                 this.received.onReceived(new GetCatalog(this.file));
             }

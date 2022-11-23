@@ -1,9 +1,10 @@
-package com.gb.views;
+package com.gb.views.ico.icoCatalog;
 
 
+import com.gb.views.ico.Ico;
 import javafx.scene.image.Image;
 
-public class IconLarge implements Ico{
+public class IconLarge implements Ico {
 //    private final Image home;
     private final Image file;
 //    private final Image saveFile;

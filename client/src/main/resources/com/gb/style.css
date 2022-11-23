@@ -11,6 +11,35 @@
     -fx-background-radius: 2;
 }
 
+.interface-button {
+/*    -fx-padding: 3;
+    -fx-cell-size: 30, 30;
+    -fx-background-size: 30, 30;*/
+    -fx-background-color: none;
+    -fx-border-width: 3;
+    -fx-border-radius: 6;
+    -fx-border-color: grey;
+}
+
+.tooltip{
+    -fx-font-size: 16;
+}
+
+.large {
+    -fx-background-color: none;
+    -fx-border-radius: 10;
+    -fx-border-style: solid;
+    -fx-border-color: grey;
+}
+
+.large:focused {
+    /*-fx-background-color: none;*/
+    -fx-border-radius: 10;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
+    -fx-border-color: blue;
+}
+
 .hyperlink {
     -fx-border-style: none;
 }

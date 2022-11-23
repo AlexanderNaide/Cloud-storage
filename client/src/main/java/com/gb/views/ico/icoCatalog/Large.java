@@ -1,4 +1,4 @@
-package com.gb.views;
+package com.gb.views.ico.icoCatalog;
 
 import com.gb.net.MessageReceived;
 import javafx.geometry.Pos;
@@ -14,5 +14,6 @@ public class Large extends TileElement {
         this.getChildren().add(imageView);
         Label label = new Label(file.getName());
         this.getChildren().add(label);
+        this.getStyleClass().addAll("large", "large:focused");
     }
 }

@@ -4,29 +4,20 @@ import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.command.NewCatalog;
 import com.gb.classes.command.RenameFile;
 import com.gb.controllers.CloudWindowController;
+import com.gb.views.ico.Ico;
+import com.gb.views.ico.icoCatalog.IconVer1;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.control.skin.TreeCellSkin;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.StringConverter;
 
-import java.awt.*;
 import java.io.File;
-
-import static javafx.scene.control.TreeView.editAnyEvent;
-import static javafx.scene.control.TreeView.editCancelEvent;
 
 public class WindowTreeView {
 

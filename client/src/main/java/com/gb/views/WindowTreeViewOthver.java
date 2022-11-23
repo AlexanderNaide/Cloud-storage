@@ -1,18 +1,13 @@
 package com.gb.views;
 
-import com.gb.classes.MyDir.MyDirectory;
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
+import com.gb.views.ico.Ico;
+import com.gb.views.ico.icoCatalog.IconVer1;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;

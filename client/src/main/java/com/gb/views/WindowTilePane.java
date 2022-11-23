@@ -6,6 +6,13 @@ import com.gb.classes.command.GetCatalog;
 import com.gb.classes.command.NewCatalog;
 import com.gb.classes.command.RenameFile;
 import com.gb.controllers.CloudWindowController;
+import com.gb.views.ico.Ico;
+import com.gb.views.ico.icoCatalog.TileElement;
+import com.gb.views.ico.icoDesktop.IcoDesktop;
+import com.gb.views.ico.icoCatalog.IconLarge;
+import com.gb.views.ico.icoCatalog.Large;
+import com.gb.views.ico.icoDesktop.InterfaceButton;
+import com.gb.views.ico.icoDesktop.InterfaceButtonBar;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -21,8 +28,6 @@ import javafx.util.StringConverter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 
 public class WindowTilePane {
 
@@ -43,8 +48,10 @@ public class WindowTilePane {
     public TilePane workingWindow;
     @FXML
     public HBox quickMenu;
+//    @FXML
+//    protected HBox desktopIcons;
     @FXML
-    protected HBox desktopIcons;
+    public ButtonBar interfaceButton;
 
     protected Ico ico;
     protected Ico desktopIco;
@@ -55,15 +62,17 @@ public class WindowTilePane {
         this.controller = controller;
         windowLogin();
         ico = new IconLarge();
-        desktopIco = new IcoDesctop();
+        desktopIco = new IcoDesktop();
 
         list = workingWindow.getChildren();
 
-        ImageView up =  new ImageView(desktopIco.getIco("up"));
-        up.setOnMouseClicked(event -> {
-            this.controller.sendMessages(new GetCatalog(this.currentDir.getParent() == null ? this.currentDir : new File(this.currentDir.getParent())));
-        });
-        desktopIcons.getChildren().add(up);
+        InterfaceButtonBar intButtonBar = new InterfaceButtonBar(interfaceButton, controller);
+
+//        ImageView up =  new ImageView(desktopIco.getIco("up"));
+//        setOnMouseClicked(event -> {
+//            this.controller.sendMessages(new GetCatalog(this.currentDir.getParent() == null ? this.currentDir : new File(this.currentDir.getParent())));
+//        });
+//        desktopIcons.getChildren().add(up);
 
 
 //        loginWindow.setPrefHeight(400);
@@ -207,23 +216,27 @@ public class WindowTilePane {
             loginWindow.setVisible(true);
         });
     }
-        protected String readTemporaryName(TreeItem<UserItem> item){
-            String name = "Новая папка";
-            String newName = name;
-            boolean x = false;
-            int n = 2;
-            while (!x){
-                for (TreeItem<UserItem> child : item.getChildren()) {
-                    if (child.getValue().toString().equals(newName)){
-                        newName = name + " " + n;
-                        n++;
-                        x = true;
-                        break;
-                    }
+
+    public void getUp(){
+        this.controller.sendMessages(new GetCatalog(this.currentDir.getParent() == null ? this.currentDir : new File(this.currentDir.getParent())));
+    }
+    protected String readTemporaryName(TreeItem<UserItem> item){
+        String name = "Новая папка";
+        String newName = name;
+        boolean x = false;
+        int n = 2;
+        while (!x){
+            for (TreeItem<UserItem> child : item.getChildren()) {
+                if (child.getValue().toString().equals(newName)){
+                    newName = name + " " + n;
+                    n++;
+                    x = true;
+                    break;
                 }
-                x = !x;
             }
-        return newName;
+            x = !x;
+        }
+    return newName;
     }
 
     public TreeItem<UserItem> getParentItem(){

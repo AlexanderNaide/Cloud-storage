@@ -1,8 +1,8 @@
 package com.gb.views;
 
-import javafx.application.Platform;
+import com.gb.views.ico.Ico;
+import com.gb.views.ico.icoCatalog.IconVer1;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;

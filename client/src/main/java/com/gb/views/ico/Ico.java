@@ -1,4 +1,4 @@
-package com.gb.views;
+package com.gb.views.ico;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

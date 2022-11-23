@@ -1,16 +1,15 @@
 package com.gb.views;
 
+import com.gb.views.ico.Ico;
+import com.gb.views.ico.icoCatalog.IconVer1;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
-import javafx.util.converter.DefaultStringConverter;
 
 import java.io.File;
 import java.util.LinkedList;
