@@ -26,18 +26,17 @@
 }
 
 .large {
+    /*-fx-background-color: none;*/
+    /*-fx-border-radius: 10;*/
+    /*-fx-border-style: solid;*/
+    /*-fx-border-color: grey;*/
+}
+
+.large:focused {
     -fx-background-color: none;
     -fx-border-radius: 10;
     -fx-border-style: solid;
     -fx-border-color: grey;
-}
-
-.large:focused {
-    /*-fx-background-color: none;*/
-    -fx-border-radius: 10;
-    -fx-border-width: 3;
-    -fx-border-style: solid;
-    -fx-border-color: blue;
 }
 
 .hyperlink {

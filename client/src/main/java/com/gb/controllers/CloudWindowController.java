@@ -7,11 +7,14 @@ import com.gb.classes.command.*;
 import com.gb.classes.Command;
 import com.gb.net.NettyNet;
 import com.gb.views.*;
+import com.gb.views.ico.icoCatalog.Large;
+import com.gb.views.ico.icoCatalog.TileElement;
 import io.netty.channel.ChannelHandlerContext;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -33,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -117,7 +121,7 @@ public class CloudWindowController extends WindowTilePane implements Initializab
     }
 
     public void DeleteButton(ActionEvent actionEvent) {
-        TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
+/*        TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
         System.out.println(item.getValue().getFile());
         if (item != treeView.getRoot()){
 //            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
@@ -129,6 +133,32 @@ public class CloudWindowController extends WindowTilePane implements Initializab
             if (alert.getResult() == ButtonType.YES) {
                 File file = item.getValue().getFile();
                 DeleteFile del = new DeleteFile(file);
+                sendMessages(del);
+            }
+        }*/
+
+        List<Node> list = new ArrayList<>();
+        StringBuilder delName = new StringBuilder();
+        for (Node child : workingWindow.getChildren()) {
+            Large l = (Large) child;
+            System.out.println(l.getFile() + " " + l.isFocused());
+            if(child.isFocused()){
+                if (delName.length() == 0){
+                    delName.append(((TileElement) child).getFile().getName());
+                }
+                else {
+                    delName.append(", ").append(((TileElement) child).getFile().getName());
+                }
+                System.out.println(((TileElement) child).getFile().getName());
+                list.add(child);
+            }
+        }
+
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Удалить " + delName.toString() + "?", ButtonType.CANCEL, ButtonType.YES);
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.YES) {
+            for (Node node : list) {
+                DeleteFile del = new DeleteFile(((TileElement) node).getFile());
                 sendMessages(del);
             }
         }
@@ -154,17 +184,18 @@ public class CloudWindowController extends WindowTilePane implements Initializab
 //        new ProcessBuilder("explorer.exe").start(); // а вот конкретно так стартует библиотека пользователя
 
 
-        List<File> files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
-        TreeItem<UserItem> parentItem = super.getParentItem();
-        parentItem.setExpanded(true);
-        for (File file : files) {
-            try {
-                byte[] dataByte = Files.readAllBytes(file.toPath());
-                String newFileName = parentItem.getValue().getFile().getPath() + "\\" + file.getName();
-                NewFile newFie = new NewFile(new File(newFileName), dataByte);
-                sendMessages(newFie);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        List<File> files = null;
+        files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
+        if (files != null) {
+            for (File file : files) {
+                try {
+                    byte[] dataByte = Files.readAllBytes(file.toPath());
+                    String newFileName = currentDir.getPath() + "\\" + file.getName();
+                    NewFile newFie = new NewFile(new File(newFileName), dataByte);
+                    sendMessages(newFie);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

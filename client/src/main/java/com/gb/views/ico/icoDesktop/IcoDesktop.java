@@ -13,11 +13,12 @@ public class IcoDesktop implements Ico {
 
 
     public IcoDesktop() {
-        up = new Image("/desk/up.png", 36, 36, false, false);
-        add = new Image("/desk/add.png", 36, 36, false, false);
-        del = new Image("/desk/del.png", 36, 36, false, false);
-        download = new Image("/desk/down.png", 36, 36, false, false);
-        upload = new Image("/desk/upload.png", 36, 36, false, false);
+        int size = 30;
+        up = new Image("/desk/up.png", size, size, false, false);
+        add = new Image("/desk/add.png", size, size, false, false);
+        del = new Image("/desk/del.png", size, size, false, false);
+        download = new Image("/desk/down.png", size, size, false, false);
+        upload = new Image("/desk/upload.png", size, size, false, false);
 
     }
 

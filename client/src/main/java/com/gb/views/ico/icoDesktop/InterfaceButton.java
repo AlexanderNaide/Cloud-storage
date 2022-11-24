@@ -4,7 +4,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class InterfaceButton extends Button {
@@ -17,10 +16,7 @@ public class InterfaceButton extends Button {
         tooltip.setShowDelay(new Duration(300));
         this.setTooltip(tooltip);
 
-//        this.paddingProperty().set(new Insets(3));
-        this.setPadding(new Insets(6, 0, 6, 0));
-//        this.setPrefSize(52, 52);
-//        this.setMaxSize(52, 52);
-//        this.setMinSize(52, 52);
+        this.setPadding(new Insets(12, 0, 12, 0));
+        this.setPrefSize(52, 52);
     }
 }

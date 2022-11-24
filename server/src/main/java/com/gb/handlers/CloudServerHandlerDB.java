@@ -87,6 +87,11 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
         channel.writeAndFlush(answer);
     }
 
+    public void getCatalog(ChannelHandlerContext channel, String path) throws NotDirectoryException {
+        Command answer = new CloudCatalog(userRootCatalog(channel), path);
+        channel.writeAndFlush(answer);
+    }
+
     public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
 //        Command answer = new MyDirectory(userRootCatalog(channel), userCatalog(channel));
         Command answer = new CloudCatalog(userRootCatalog(channel), userCatalog(channel));
@@ -106,7 +111,9 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
         if(!Files.exists(createFile)){
             Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
         }
-        updateCatalog(channel);
+//        updateCatalog(channel);
+        getCatalog(channel, newFile.getFile().toPath().getParent().toString());
+
     }
 
 

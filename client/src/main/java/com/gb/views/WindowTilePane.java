@@ -14,7 +14,10 @@ import com.gb.views.ico.icoCatalog.Large;
 import com.gb.views.ico.icoDesktop.InterfaceButton;
 import com.gb.views.ico.icoDesktop.InterfaceButtonBar;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -67,6 +70,32 @@ public class WindowTilePane {
         list = workingWindow.getChildren();
 
         InterfaceButtonBar intButtonBar = new InterfaceButtonBar(interfaceButton, controller);
+
+
+/*        workingWindow.setOnMouseClicked(event -> {
+            if(event.getTarget() instanceof TilePane){
+                workingWindow.requestFocus();
+            }
+        });*/
+
+        /**
+         * Капаться тут
+         */
+
+        workingWindow.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                System.out.println(newValue.toString());
+            } else {
+                System.out.println(oldValue.toString());
+            }
+        });
+
+
+//        FlowPane flowPane = new FlowPane();
+
+//        workingWindow.setOnMouseClicked(event -> {
+//            workingWindow.isFocusTraversable();
+//        });
 
 //        ImageView up =  new ImageView(desktopIco.getIco("up"));
 //        setOnMouseClicked(event -> {
@@ -192,8 +221,10 @@ public class WindowTilePane {
 //            workingWindow.setPrefHeight(USE_COMPUTED_SIZE);
 //            VBox.setMargin(workingWindow, new Insets(0));
 //            workingWindow.setPadding(new Insets(10));
-            workingWindow.setHgap(30);
-            workingWindow.setVgap(20);
+            workingWindow.setHgap(10);
+            workingWindow.setVgap(10);
+            workingWindow.setPrefTileHeight(120);
+            workingWindow.setPrefTileWidth(90);
             workingWindow.setPadding(new Insets(10, 20, 10, 20));
 
         });
