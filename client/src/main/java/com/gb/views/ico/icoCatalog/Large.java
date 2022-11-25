@@ -15,7 +15,7 @@ public class Large extends TileElement {
         this.getChildren().add(imageView);
         Label label = new Label(file.getName());
         this.getChildren().add(label);
-        this.getStyleClass().addAll("large", "large:focused");
+        this.getStyleClass().addAll("large");
         this.setFillWidth(false);
         this.setAlignment(Pos.TOP_CENTER);
         this.setPadding(new Insets(0, 5, 0, 5));

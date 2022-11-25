@@ -32,7 +32,16 @@
     /*-fx-border-color: grey;*/
 }
 
+/*
 .large:focused {
+    -fx-background-color: none;
+    -fx-border-radius: 10;
+    -fx-border-style: solid;
+    -fx-border-color: grey;
+}
+*/
+
+.tile-element:focus {
     -fx-background-color: none;
     -fx-border-radius: 10;
     -fx-border-style: solid;

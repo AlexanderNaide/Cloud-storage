@@ -31,6 +31,7 @@ import javafx.util.StringConverter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WindowTilePane {
 
@@ -71,42 +72,18 @@ public class WindowTilePane {
 
         InterfaceButtonBar intButtonBar = new InterfaceButtonBar(interfaceButton, controller);
 
-
-/*        workingWindow.setOnMouseClicked(event -> {
-            if(event.getTarget() instanceof TilePane){
-                workingWindow.requestFocus();
-            }
-        });*/
-
-        /**
-         * Капаться тут
-         */
-
-        workingWindow.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                System.out.println(newValue.toString());
-            } else {
-                System.out.println(oldValue.toString());
+        workingWindow.setOnMouseClicked(event -> {
+            if (event.getTarget() instanceof TilePane){
+                for (Node child : workingWindow.getChildren()) {
+                    ((TileElement) child).setFocus(false);
+                }
             }
         });
 
 
-//        FlowPane flowPane = new FlowPane();
-
-//        workingWindow.setOnMouseClicked(event -> {
-//            workingWindow.isFocusTraversable();
-//        });
-
-//        ImageView up =  new ImageView(desktopIco.getIco("up"));
-//        setOnMouseClicked(event -> {
-//            this.controller.sendMessages(new GetCatalog(this.currentDir.getParent() == null ? this.currentDir : new File(this.currentDir.getParent())));
-//        });
-//        desktopIcons.getChildren().add(up);
 
 
-//        loginWindow.setPrefHeight(400);
 
-//        loginWindow.setPrefHeight(loginWindow.getParent().get);
 
 
         treeView = new TreeView<UserItem>();
@@ -268,6 +245,17 @@ public class WindowTilePane {
             x = !x;
         }
     return newName;
+    }
+
+    public List<TileElement> getSelected (){
+        List<TileElement> list = new ArrayList<>();
+        for (Node child : workingWindow.getChildren()) {
+            TileElement element = (TileElement) child;
+            if (element.isFocus()){
+                list.add(element);
+            }
+        }
+        return list;
     }
 
     public TreeItem<UserItem> getParentItem(){

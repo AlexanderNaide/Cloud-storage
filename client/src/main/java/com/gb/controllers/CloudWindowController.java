@@ -69,7 +69,7 @@ public class CloudWindowController extends WindowTilePane implements Initializab
     private void readCommand(Command command) {
 
         log.debug("Received: {}", command);
-        if (command != null){
+        if (command != null) {
             String com = command.getName();
             switch (com) {
                 case "UpdateCatalog" -> System.out.println("Update catalog");
@@ -94,7 +94,7 @@ public class CloudWindowController extends WindowTilePane implements Initializab
         */
     }
 
-    public void createNewFile(NewFile newFile){
+    public void createNewFile(NewFile newFile) {
         try {
             Path createFile = Paths.get(newFile.getFile().getPath());
             Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
@@ -112,7 +112,7 @@ public class CloudWindowController extends WindowTilePane implements Initializab
 
         TreeItem<UserItem> parentItem = getParentItem();
         TreeItem<UserItem> newItem = new TreeItem<>();
-        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
+        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)), true));
         newItem.setGraphic(new ImageView(ico.getIco("cat")));
         parentItem.getChildren().add(0, newItem);
         parentItem.setExpanded(true);
@@ -121,44 +121,37 @@ public class CloudWindowController extends WindowTilePane implements Initializab
     }
 
     public void DeleteButton(ActionEvent actionEvent) {
-/*        TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
-        System.out.println(item.getValue().getFile());
-        if (item != treeView.getRoot()){
-//            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-//            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-//            Alert alert = new Alert(Alert.AlertType.ERROR, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-//            Alert alert = new Alert(Alert.AlertType.NONE, "Delete " + item.getValue() + " ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ " + item.getValue() + " ?", ButtonType.CANCEL, ButtonType.YES);
-            alert.showAndWait();
-            if (alert.getResult() == ButtonType.YES) {
-                File file = item.getValue().getFile();
-                DeleteFile del = new DeleteFile(file);
-                sendMessages(del);
-            }
-        }*/
-
-        List<Node> list = new ArrayList<>();
         StringBuilder delName = new StringBuilder();
-        for (Node child : workingWindow.getChildren()) {
-            Large l = (Large) child;
-            System.out.println(l.getFile() + " " + l.isFocused());
-            if(child.isFocused()){
-                if (delName.length() == 0){
-                    delName.append(((TileElement) child).getFile().getName());
+        List<TileElement> list = getSelected();
+        if (list.size() == 0){
+            return;
+        }else if (list.size() < 4){
+            for (TileElement element : list) {
+                Large l = (Large) element;
+                if (delName.length() == 0) {
+                    delName.append(l.getFile().getName());
+                } else {
+                    delName.append(", ").append(l.getFile().getName());
                 }
-                else {
-                    delName.append(", ").append(((TileElement) child).getFile().getName());
-                }
-                System.out.println(((TileElement) child).getFile().getName());
-                list.add(child);
             }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                Large l = (Large) list.get(i);
+                if (i == 0) {
+                    delName.append(l.getFile().getName());
+                } else {
+                    delName.append(", ").append(l.getFile().getName());
+                }
+            }
+            delName.append(" è äð.");
         }
-
-        Alert alert = new Alert(Alert.AlertType.WARNING, "Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ " + delName.toString() + "?", ButtonType.CANCEL, ButtonType.YES);
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Óäàëèòü " + delName.toString() + "?", ButtonType.CANCEL, ButtonType.YES);
+//            Alert alert = new Alert(Alert.AlertType.WARNING, new String(("Óäàëèòü " + delName + "?").getBytes(StandardCharsets.UTF_8)), ButtonType.CANCEL, ButtonType.OK);
         alert.showAndWait();
         if (alert.getResult() == ButtonType.YES) {
-            for (Node node : list) {
-                DeleteFile del = new DeleteFile(((TileElement) node).getFile());
+            for (TileElement t : list) {
+                Large l = (Large) t;
+                DeleteFile del = new DeleteFile(l.getFile());
                 sendMessages(del);
             }
         }
@@ -175,13 +168,13 @@ public class CloudWindowController extends WindowTilePane implements Initializab
 
     public void AddFile(ActionEvent actionEvent) throws IOException {
 /*
-        Ð’Ð¾Ñ‚ ÑÑ‚Ð° Ñ‚ÐµÐ¼Ð° Ð·Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÑ‚ Ð­ÐºÑÐ¿Ð»Ð¾Ñ€ÐµÑ€ Ð² ÑƒÐºÐ°Ð·Ð°Ð½Ð½Ð¾Ð¹ Ð¿Ð°Ð¿ÐºÐµ
+        Âîò ýòà òåìà çàãðóæàåò Ýêñïëîðåð â óêàçàííîé ïàïêå
 
         String onlyPath = "D:\\";
         String completeCmd = "explorer.exe /select," + onlyPath;
         new ProcessBuilder(("explorer.exe " + completeCmd).split(" ")).start();
         */
-//        new ProcessBuilder("explorer.exe").start(); // Ð° Ð²Ð¾Ñ‚ ÐºÐ¾Ð½ÐºÑ€ÐµÑ‚Ð½Ð¾ Ñ‚Ð°Ðº ÑÑ‚Ð°Ñ€Ñ‚ÑƒÐµÑ‚ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ° Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
+//        new ProcessBuilder("explorer.exe").start(); // à âîò êîíêðåòíî òàê ñòàðòóåò áèáëèîòåêà ïîëüçîâàòåëÿ
 
 
         List<File> files = null;
@@ -219,7 +212,7 @@ public class CloudWindowController extends WindowTilePane implements Initializab
 
         String login = loginField.getText();
         String password = passField.getText();
-        if (login.isBlank() || password.isBlank()){
+        if (login.isBlank() || password.isBlank()) {
             return;
         }
         UserConnect userConnect = new UserConnect(login, password);
@@ -232,7 +225,7 @@ public class CloudWindowController extends WindowTilePane implements Initializab
         String login = loginField.getText();
         String password = passField.getText();
 
-        if (login.isBlank() || password.isBlank()){
+        if (login.isBlank() || password.isBlank()) {
             return;
         }
 

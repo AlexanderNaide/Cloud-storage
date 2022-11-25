@@ -12,7 +12,7 @@ public class InterfaceButtonBar {
 
     private final ButtonBar interfaceButton;
 
-    private CloudWindowController controller;
+    private final CloudWindowController controller;
     private final Ico ico;
 
     public InterfaceButtonBar(ButtonBar interfaceButton, CloudWindowController controller) {
@@ -53,9 +53,6 @@ public class InterfaceButtonBar {
 
         Button del = new InterfaceButton("Удалить с сервера", new ImageView(ico.getIco("del")));
         interfaceButton.getButtons().add(4, del);
-        del.setOnAction(event -> {
-            controller.DeleteButton(event);
-            System.out.println("Удалить с сервера");
-        });
+        del.setOnAction(controller::DeleteButton);
     }
 }
