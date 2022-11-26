@@ -31,9 +31,7 @@ public class InterfaceButtonBar {
 
         Button add = new InterfaceButton("Создать папку", new ImageView(ico.getIco("add")));
         interfaceButton.getButtons().add(1, add);
-        add.setOnAction(event -> {
-            System.out.println("Создать папку");
-        });
+        add.setOnAction(controller::AddDirectory);
 
         Button upload = new InterfaceButton("Загрузить файл", new ImageView(ico.getIco("upload")));
         interfaceButton.getButtons().add(2, upload);
@@ -47,12 +45,14 @@ public class InterfaceButtonBar {
 
         Button download = new InterfaceButton("Скачать файл", new ImageView(ico.getIco("download")));
         interfaceButton.getButtons().add(3, download);
-        download.setOnAction(event -> {
-            System.out.println("Скачать файл");
-        });
+        download.setOnAction(controller::DownloadButton);
 
         Button del = new InterfaceButton("Удалить с сервера", new ImageView(ico.getIco("del")));
         interfaceButton.getButtons().add(4, del);
         del.setOnAction(controller::DeleteButton);
+
+        Button rename = new InterfaceButton("Переименовать", new ImageView(ico.getIco("rename")));
+        interfaceButton.getButtons().add(5, rename);
+        rename.setOnAction(controller::rename);
     }
 }

@@ -56,8 +56,13 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
     }
 
     public void userConnect(ChannelHandlerContext channel, UserConnect userConnect) throws NotDirectoryException {
-        userConnections(channel, userConnect);
-        updateCatalog(channel);
+        if (userConnections(channel, userConnect)){
+            updateCatalog(channel);
+        } else {
+            channel.writeAndFlush(new MyMessage("Пароль неверный."));
+        }
+//        userConnections(channel, userConnect);
+//        updateCatalog(channel);
 
 //        channel.channel().pipeline().get();
 
@@ -79,7 +84,8 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
         if(Files.exists(path)){
             path.toFile().renameTo(Path.of(userRootCatalog(channel) + renameFile.getNewFile().getPath()).toFile());
         }
-        updateCatalog(channel);
+//        updateCatalog(channel);
+        getCatalog(channel, renameFile.getFile().toPath().getParent().toString());
     }
 
     public void getCatalog(ChannelHandlerContext channel, GetCatalog command) throws NotDirectoryException {
@@ -103,7 +109,8 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
         if(!Files.exists(newCat)){
             Files.createDirectory(newCat);
         }
-        updateCatalog(channel);
+//        updateCatalog(channel);
+        getCatalog(channel, newCatalog.getFile().toPath().getParent().toString());
     }
 
     public void createNewFile(ChannelHandlerContext channel, NewFile newFile) throws NotDirectoryException, IOException {
@@ -125,7 +132,8 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
             Command answer = new NewFile(answerFile, dataByte);
             channel.writeAndFlush(answer);
         }
-        updateCatalog(channel);
+//        updateCatalog(channel);
+        getCatalog(channel, getFile.getFile().toPath().getParent().toString());
     }
 
     public void deleteFile(ChannelHandlerContext channel, DeleteFile deleteFile) throws NotDirectoryException, IOException {
@@ -143,7 +151,8 @@ public class CloudServerHandlerDB extends SimpleChannelInboundHandler<Command> {
                 return FileVisitResult.CONTINUE;
             }
         });
-        updateCatalog(channel);
+//        updateCatalog(channel);
+        getCatalog(channel, deleteFile.getFile().toPath().getParent().toString());
     }
 
     private void createCatalog(String dir) throws IOException {

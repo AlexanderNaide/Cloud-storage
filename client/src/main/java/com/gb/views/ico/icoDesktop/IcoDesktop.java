@@ -10,6 +10,7 @@ public class IcoDesktop implements Ico {
     private final Image del;
     private final Image download;
     private final Image upload;
+    private final Image rename;
 
 
     public IcoDesktop() {
@@ -19,6 +20,7 @@ public class IcoDesktop implements Ico {
         del = new Image("/desk/del.png", size, size, false, false);
         download = new Image("/desk/down.png", size, size, false, false);
         upload = new Image("/desk/upload.png", size, size, false, false);
+        rename = new Image("/desk/rename.png", size, size, false, false);
 
     }
 
@@ -30,6 +32,7 @@ public class IcoDesktop implements Ico {
             case "del" -> del;
             case "download" -> download;
             case "upload" -> upload;
+            case "rename" -> rename;
             default -> null;
         };
     }

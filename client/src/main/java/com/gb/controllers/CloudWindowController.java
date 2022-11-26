@@ -2,41 +2,29 @@ package com.gb.controllers;
 
 import com.gb.classes.MyDir.CloudCatalog;
 import com.gb.classes.MyDir.MyDirectory;
-import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.*;
 import com.gb.classes.Command;
 import com.gb.net.NettyNet;
 import com.gb.views.*;
 import com.gb.views.ico.icoCatalog.Large;
 import com.gb.views.ico.icoCatalog.TileElement;
-import io.netty.channel.ChannelHandlerContext;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
-
-import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.URL;
-import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -61,10 +49,6 @@ public class CloudWindowController extends WindowTilePane implements Initializab
     public void sendMessages(Command command) {
         net.sendMessages(command);
     }
-
-/*    public static void sendMessages(Command command) {
-        net.sendMessages(command);
-    }*/
 
     private void readCommand(Command command) {
 
@@ -110,13 +94,20 @@ public class CloudWindowController extends WindowTilePane implements Initializab
 
     public void AddDirectory(ActionEvent actionEvent) {
 
-        TreeItem<UserItem> parentItem = getParentItem();
-        TreeItem<UserItem> newItem = new TreeItem<>();
-        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)), true));
-        newItem.setGraphic(new ImageView(ico.getIco("cat")));
-        parentItem.getChildren().add(0, newItem);
-        parentItem.setExpanded(true);
-        setEditing(newItem);
+        TileElement newElement = new Large(new ImageView(ico.getIco("cat")), new File(currentDir + "\\" + readTemporaryName()), controller::sendMessages);
+        workingWindow.getChildren().add(newElement);
+        newElement.editing();
+
+    }
+
+    public void rename(ActionEvent actionEvent) {
+
+        List<TileElement> list = getSelected();
+        TileElement renElement = list.get(0);
+
+        if(renElement != null){
+            renElement.rename();
+        }
 
     }
 
@@ -195,9 +186,13 @@ public class CloudWindowController extends WindowTilePane implements Initializab
 
     public void DownloadButton(ActionEvent actionEvent) {
         File dir = directoryChooser.showDialog(HomeWindow.getScene().getWindow());
-        ObservableList<TreeItem<UserItem>> list = treeView.getSelectionModel().getSelectedItems();
-        for (TreeItem<UserItem> userItemTreeItem : list) {
-            File file = userItemTreeItem.getValue().getFile();
+//        ObservableList<TreeItem<UserItem>> list = treeView.getSelectionModel().getSelectedItems();
+        List<TileElement> list = getSelected();
+
+//        for (TreeItem<UserItem> userItemTreeItem : list) {
+        for (TileElement element : list) {
+            File file = ((Large) element).getFile();
+//            File cfile = userItemTreeItem.getValue().getFile();
             sendMessages(new GetFile(file, dir.getPath()));
         }
     }

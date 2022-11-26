@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="CloudStorageDB" uuid="5962e815-f270-4c17-b360-e320f4400b73">
+    <data-source source="LOCAL" name="CloudStorageDB for work" uuid="5962e815-f270-4c17-b360-e320f4400b73">
       <driver-ref>4ade9938-c308-4df5-b8ec-d8e03ce9866d</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
@@ -16,15 +16,18 @@
         </library>
       </libraries>
     </data-source>
-    <data-source source="LOCAL" name="CloudStorageDB [2]" uuid="dcf276f8-de56-49a3-9be2-1def1a3e484b">
-      <driver-ref>sqlite.xerial</driver-ref>
+    <data-source source="LOCAL" name="CloudStorageDB for home" uuid="679d2751-4ad4-443c-81f9-1901ea7b7274">
+      <driver-ref>4ade9938-c308-4df5-b8ec-d8e03ce9866d</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:C:\Users\al121\IdeaProjects\Cloud-Storage\server\src\main\resources\CloudStorageDB.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>
-          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.38.0/sqlite-jdbc-3.38.0.jar</url>
+          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/MySQL ConnectorJ/8.0.25/mysql-connector-java-8.0.25.jar</url>
+        </library>
+        <library>
+          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.39.2/sqlite-jdbc-3.39.2.jar</url>
         </library>
       </libraries>
     </data-source>
