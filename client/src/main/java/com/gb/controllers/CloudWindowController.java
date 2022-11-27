@@ -11,6 +11,7 @@ import com.gb.views.ico.icoCatalog.TileElement;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -30,7 +31,6 @@ import java.util.ResourceBundle;
 
 @Slf4j
 public class CloudWindowController extends WindowTilePane implements Initializable {
-    public AnchorPane HomeWindow;
     public TextField loginField;
     public TextField passField;
     private FileChooser fileChooser;

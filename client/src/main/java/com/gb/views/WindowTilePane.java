@@ -11,23 +11,30 @@ import com.gb.views.ico.icoCatalog.TileElement;
 import com.gb.views.ico.icoDesktop.IcoDesktop;
 import com.gb.views.ico.icoDesktop.InterfaceButtonBar;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Long.MAX_VALUE;
 import static javafx.scene.layout.Region.*;
 
 public class WindowTilePane {
 
+    @FXML
+    protected AnchorPane HomeWindow;
     @FXML
     protected Pane loginPane;
     protected CloudWindowController controller;
@@ -47,14 +54,17 @@ public class WindowTilePane {
     public HBox quickMenu;
     @FXML
     public ButtonBar interfaceButton;
-
     @FXML
     public Label parentDirOnDisplay;
 
     protected Ico ico;
     protected Ico desktopIco;
     protected File currentDir;
+
+    protected Rectangle selectionRectangle;
+    protected Rectangle[] selectionRect;
     List<Node> list;
+
     public void initialize(CloudWindowController controller) {
 
         this.controller = controller;
@@ -74,6 +84,10 @@ public class WindowTilePane {
         quickMenu.getChildren().add(0, parentDirOnDisplay);
 
         InterfaceButtonBar intButtonBar = new InterfaceButtonBar(interfaceButton, controller);
+        selectionRectangle = new Rectangle(0, 0, Color.TRANSPARENT);
+        selectionRectangle.setStroke(Color.GRAY);
+        selectionRect = new Rectangle[]{selectionRectangle};
+        HomeWindow.getChildren().add(selectionRect[0]);
 
         workingWindow.setOnMouseClicked(event -> {
             if (event.getTarget() instanceof TilePane){
@@ -82,10 +96,49 @@ public class WindowTilePane {
                 }
             }
         });
+        AtomicReference<Double> x = new AtomicReference<>((double) 0);
+        AtomicReference<Double> y = new AtomicReference<>((double) 0);
 
+        workingWindow.setOnMousePressed(event -> {
+            selectionRectangle.setStroke(Color.GRAY);
+            x.set(event.getSceneX());
+            y.set(event.getSceneY());
+        });
 
+        workingWindow.setOnMouseReleased(event -> {
+            selectionRectangle.setStroke(null);
+            selectionRect[0].setLayoutX(0);
+            selectionRect[0].setWidth(0);
+            selectionRect[0].setLayoutY(0);
+            selectionRect[0].setHeight(0);
+        });
 
+        workingWindow.setOnMouseDragged(event -> {
 
+            if (x.get() < event.getSceneX()){
+                selectionRect[0].setLayoutX(x.get());
+                selectionRect[0].setWidth(event.getSceneX() - x.get());
+            } else {
+                selectionRect[0].setLayoutX(event.getSceneX());
+                selectionRect[0].setWidth(x.get() - event.getSceneX());
+            }
+            if (y.get() < event.getSceneY()){
+                selectionRect[0].setLayoutY(y.get());
+                selectionRect[0].setHeight(event.getSceneY() - y.get());
+            } else {
+                selectionRect[0].setLayoutY(event.getSceneY());
+                selectionRect[0].setHeight(y.get() - event.getSceneY());
+            }
+
+            handleSelection(selectionRect[0], event);
+        });
+    }
+
+    private void handleSelection(Rectangle selectionRect, MouseEvent event) {
+        for (Node element : workingWindow.getChildren()) {
+            TileElement tileElement = (TileElement) element;
+            tileElement.setFocus(selectionRect.getBoundsInParent().intersects(element.getBoundsInParent()));
+        }
     }
 
 

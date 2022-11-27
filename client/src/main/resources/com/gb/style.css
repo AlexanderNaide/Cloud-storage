@@ -6,17 +6,24 @@
 }
 
 .button {
-    -fx-background-color: linear-gradient(#328BDB 0.0%, #207BCF 25.0%, #1973C9 75.0%, #0A65BF 100.0%);
+/*    -fx-background-color: linear-gradient(#328BDB 0.0%, #207BCF 25.0%, #1973C9 75.0%, #0A65BF 100.0%);
     -fx-text-fill: white;
-    -fx-background-radius: 2;
+    -fx-background-radius: 2;*/
+    -fx-border-style: ridge;
+    /*-fx-border-style: dotted dashed solid double;*/
+    -fx-background-color: none;
+    -fx-border-width: 5;
+    -fx-border-radius: 6;
+    -fx-border-color: grey;
 }
 
 .interface-button {
 /*    -fx-padding: 3;
     -fx-cell-size: 30, 30;
     -fx-background-size: 30, 30;*/
+    -fx-border-style: dotted dashed solid double;
     -fx-background-color: none;
-    -fx-border-width: 3;
+    -fx-border-width: 5;
     -fx-border-radius: 6;
     -fx-border-color: grey;
 }
