@@ -20,7 +20,7 @@
             </Hyperlink>
         </HBox>
         <HBox fx:id="interactiveWindow" maxHeight="60.0" minHeight="60.0" prefHeight="60.0">
-            <Pane prefHeight="60.0" prefWidth="160.0" />
+            <Pane prefHeight="60.0" prefWidth="260.0" />
          <ButtonBar fx:id="interfaceButton" prefHeight="60.0" prefWidth="200.0" />
         </HBox>
       <TilePane fx:id="workingWindow" maxHeight="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS" />

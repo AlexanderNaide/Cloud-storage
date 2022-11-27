@@ -25,7 +25,9 @@ import javafx.scene.shape.Rectangle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Long.MAX_VALUE;
@@ -63,7 +65,9 @@ public class WindowTilePane {
 
     protected Rectangle selectionRectangle;
     protected Rectangle[] selectionRect;
-    List<Node> list;
+    protected List<Node> list;
+    protected Set<TileElement> selectedList;
+    private boolean isDragged;
 
     public void initialize(CloudWindowController controller) {
 
@@ -84,37 +88,43 @@ public class WindowTilePane {
         quickMenu.getChildren().add(0, parentDirOnDisplay);
 
         InterfaceButtonBar intButtonBar = new InterfaceButtonBar(interfaceButton, controller);
-        selectionRectangle = new Rectangle(0, 0, Color.TRANSPARENT);
-        selectionRectangle.setStroke(Color.GRAY);
+//        selectionRectangle = new Rectangle(0, 0, Color.TRANSPARENT);
+//        selectionRectangle.setStroke(Color.GRAY);
+        selectionRectangle = new Rectangle(0, 0, Color.DODGERBLUE);
+        selectionRectangle.setOpacity(0.2);
         selectionRect = new Rectangle[]{selectionRectangle};
         HomeWindow.getChildren().add(selectionRect[0]);
-
-        workingWindow.setOnMouseClicked(event -> {
-            if (event.getTarget() instanceof TilePane){
-                for (Node child : workingWindow.getChildren()) {
-                    ((TileElement) child).setFocus(false);
-                }
-            }
-        });
         AtomicReference<Double> x = new AtomicReference<>((double) 0);
         AtomicReference<Double> y = new AtomicReference<>((double) 0);
 
         workingWindow.setOnMousePressed(event -> {
-            selectionRectangle.setStroke(Color.GRAY);
+//            selectionRectangle.setStroke(Color.GRAY);
+            selectionRectangle.setOpacity(0.2);
             x.set(event.getSceneX());
             y.set(event.getSceneY());
+            createSelectedSet();
         });
 
         workingWindow.setOnMouseReleased(event -> {
-            selectionRectangle.setStroke(null);
+//            selectionRectangle.setStroke(null);
+            selectionRectangle.setOpacity(0.0);
             selectionRect[0].setLayoutX(0);
             selectionRect[0].setWidth(0);
             selectionRect[0].setLayoutY(0);
             selectionRect[0].setHeight(0);
+            if ((event.getTarget() instanceof TilePane) && !isDragged){
+                for (Node child : workingWindow.getChildren()) {
+                    ((TileElement) child).setFocus(false);
+                }
+            } else {
+                clearSelectedSet();
+            }
+            isDragged = false;
         });
 
         workingWindow.setOnMouseDragged(event -> {
 
+            isDragged = true;
             if (x.get() < event.getSceneX()){
                 selectionRect[0].setLayoutX(x.get());
                 selectionRect[0].setWidth(event.getSceneX() - x.get());
@@ -137,8 +147,29 @@ public class WindowTilePane {
     private void handleSelection(Rectangle selectionRect, MouseEvent event) {
         for (Node element : workingWindow.getChildren()) {
             TileElement tileElement = (TileElement) element;
-            tileElement.setFocus(selectionRect.getBoundsInParent().intersects(element.getBoundsInParent()));
+            boolean f = selectionRect.getBoundsInParent().intersects(element.getBoundsInParent());
+            if (f){
+                tileElement.setFocus(true);
+                selectedList.add(tileElement);
+            }
         }
+    }
+
+    public void createSelectedSet(){
+        selectedList = new HashSet<>();
+        for (Node child : workingWindow.getChildren()) {
+            TileElement e = (TileElement) child;
+            if (e.isFocus()){
+                selectedList.add(e);
+            }
+        }
+    }
+
+    public void clearSelectedSet(){
+        for (TileElement element : selectedList) {
+            element.setFocus(true);
+        }
+        selectedList.clear();
     }
 
 
