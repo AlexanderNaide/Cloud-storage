@@ -6,7 +6,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+
+import javax.naming.ldap.Control;
 import java.io.File;
 
 
@@ -22,9 +26,12 @@ public abstract class TileElement extends VBox {
         focus.addListener(e -> {
             pseudoClassStateChanged(PseudoClass.getPseudoClass("focus"), focus.get());
         });
+
         this.setOnMouseClicked(event -> {
-            for (Node node : this.getParent().getChildrenUnmodifiable()) {
-                ((TileElement) node).setFocus(false);
+            if(!event.isControlDown()) {
+                for (Node node : this.getParent().getChildrenUnmodifiable()) {
+                    ((TileElement) node).setFocus(false);
+                }
             }
             setFocus(!isFocus());
             if (event.getClickCount() == 2){

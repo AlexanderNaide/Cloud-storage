@@ -14,15 +14,10 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,6 +48,9 @@ public class WindowTilePane {
     @FXML
     public ButtonBar interfaceButton;
 
+    @FXML
+    public Label parentDirOnDisplay;
+
     protected Ico ico;
     protected Ico desktopIco;
     protected File currentDir;
@@ -66,6 +64,15 @@ public class WindowTilePane {
 
         list = workingWindow.getChildren();
 
+        parentDirOnDisplay = new Label();
+        HBox.setHgrow(parentDirOnDisplay, Priority.ALWAYS);
+        parentDirOnDisplay.setMinWidth(USE_PREF_SIZE);
+        parentDirOnDisplay.setPrefWidth(USE_COMPUTED_SIZE);
+        parentDirOnDisplay.setMaxWidth(MAX_VALUE);
+        parentDirOnDisplay.setPadding(new Insets(0, 0, 0, 10));
+
+        quickMenu.getChildren().add(0, parentDirOnDisplay);
+
         InterfaceButtonBar intButtonBar = new InterfaceButtonBar(interfaceButton, controller);
 
         workingWindow.setOnMouseClicked(event -> {
@@ -75,6 +82,10 @@ public class WindowTilePane {
                 }
             }
         });
+
+
+
+
     }
 
 
@@ -191,6 +202,7 @@ public class WindowTilePane {
             list.add(new Large(new ImageView(ico.getIco("file")), file, controller::sendMessages));
         }
         Platform.runLater(() -> {
+            parentDirOnDisplay.setText(currentDir.getPath().replace(currentDir.toPath().getName(0).toString(), "Home"));
             workingWindow.getChildren().remove(0, workingWindow.getChildren().size());
             workingWindow.getChildren().addAll(list);
         });

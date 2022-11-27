@@ -7,8 +7,13 @@
 
 <AnchorPane fx:id="HomeWindow" minHeight="400.0" minWidth="300.0" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gb.controllers.CloudWindowController">
     <VBox fx:id="VBoxHomeWindow" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <HBox fx:id="quickMenu" alignment="CENTER_RIGHT" maxHeight="20.0" minHeight="20.0" prefHeight="20.0">
-            <Hyperlink fx:id="logOutPanel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxHeight="20.0" minHeight="20.0" onAction="#Logout" prefHeight="20.0" text="Logout" textAlignment="CENTER">
+        <HBox fx:id="quickMenu" alignment="CENTER_LEFT" maxHeight="20.0" minHeight="20.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0">
+<!--         <Label fx:id="parentDirOnDisplay" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="17.0" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+               <Insets left="5.0" />
+            </HBox.margin>
+         </Label>-->
+            <Hyperlink fx:id="logOutPanel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxHeight="20.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" onAction="#Logout" prefHeight="20.0" text="Logout" textAlignment="RIGHT">
                 <padding>
                     <Insets right="5.0" />
                 </padding>

@@ -7,7 +7,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
+
 import java.io.File;
 
 public class Large extends TileElement {
@@ -16,12 +21,20 @@ public class Large extends TileElement {
         super(file, received);
         this.setAlignment(Pos.CENTER);
         this.getChildren().add(imageView);
-        Label label = new Label(file.getName());
+        String fileName = file.getName();
+        Label label = new Label(fileName);
+        label.setLineSpacing(2);
+        label.setTextAlignment(TextAlignment.CENTER);
         this.getChildren().add(label);
         this.getStyleClass().addAll("large");
         this.setFillWidth(false);
         this.setAlignment(Pos.TOP_CENTER);
         this.setPadding(new Insets(0, 5, 0, 5));
+
+        Tooltip tooltip = new Tooltip(file.getName());
+        tooltip.setShowDelay(new Duration(300));
+        label.setTooltip(tooltip);
+        
     }
 
     public void editing(){

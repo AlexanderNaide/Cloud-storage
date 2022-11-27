@@ -5,9 +5,11 @@ import com.gb.views.ico.Ico;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.image.ImageView;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
+@Slf4j
 public class InterfaceButtonBar {
 
     private final ButtonBar interfaceButton;
@@ -39,7 +41,7 @@ public class InterfaceButtonBar {
             try {
                 controller.AddFile(event);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                log.error("e=", e);
             }
         });
 
