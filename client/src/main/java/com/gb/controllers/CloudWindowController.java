@@ -15,6 +15,8 @@ import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -33,6 +35,7 @@ import java.util.ResourceBundle;
 public class CloudWindowController extends WindowTilePane implements Initializable {
     public TextField loginField;
     public TextField passField;
+    public Label logout;
     private FileChooser fileChooser;
     private DirectoryChooser directoryChooser;
     private static NettyNet net;
@@ -229,10 +232,9 @@ public class CloudWindowController extends WindowTilePane implements Initializab
 
     }
 
-    public void Logout(ActionEvent actionEvent) {
+
+    public void Logout(MouseEvent mouseEvent) {
         windowLogin();
         sendMessages(new UserDisconnect());
     }
-
-
 }

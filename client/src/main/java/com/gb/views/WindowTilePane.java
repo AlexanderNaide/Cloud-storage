@@ -18,16 +18,14 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Long.MAX_VALUE;
@@ -102,7 +100,7 @@ public class WindowTilePane {
             selectionRectangle.setOpacity(0.2);
             x.set(event.getSceneX());
             y.set(event.getSceneY());
-            createSelectedSet();
+            createSelectedSet(event.isControlDown());
         });
 
         workingWindow.setOnMouseReleased(event -> {
@@ -144,6 +142,15 @@ public class WindowTilePane {
         });
     }
 
+    public void keyTyped(KeyEvent keyEvent) {
+        if (keyEvent.getCharacter().getBytes()[0] == 1){
+            for (Node child : workingWindow.getChildren()) {
+                TileElement e = (TileElement) child;
+                e.setFocus(true);
+            }
+        }
+    }
+
     private void handleSelection(Rectangle selectionRect, MouseEvent event) {
         for (Node element : workingWindow.getChildren()) {
             TileElement tileElement = (TileElement) element;
@@ -155,12 +162,21 @@ public class WindowTilePane {
         }
     }
 
-    public void createSelectedSet(){
+    public void createSelectedSet(boolean isAdded){
         selectedList = new HashSet<>();
-        for (Node child : workingWindow.getChildren()) {
-            TileElement e = (TileElement) child;
-            if (e.isFocus()){
-                selectedList.add(e);
+        if (isAdded){
+            for (Node child : workingWindow.getChildren()) {
+                TileElement e = (TileElement) child;
+                if (e.isFocus()){
+                    selectedList.add(e);
+                }
+            }
+        } else {
+            for (Node child : workingWindow.getChildren()) {
+                TileElement e = (TileElement) child;
+                if (e.isFocus()){
+                    e.setFocus(false);
+                }
             }
         }
     }
