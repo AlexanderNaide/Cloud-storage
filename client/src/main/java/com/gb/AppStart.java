@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.util.Objects;
@@ -25,6 +27,7 @@ public class AppStart extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Cloud storage");
         primaryStage.setResizable(true);
+        primaryStage.getIcons().add(new Image(String.valueOf((getClass().getResource("cloud.png"))), 137, 84, false, false));
         primaryStage.show();
     }
 
