@@ -36,6 +36,7 @@ public class CloudWindowController extends WindowTilePane implements Initializab
     public TextField loginField;
     public TextField passField;
     public Label logout;
+    public Pane animatedProgress;
     private FileChooser fileChooser;
     private DirectoryChooser directoryChooser;
     private static NettyNet net;
@@ -46,7 +47,7 @@ public class CloudWindowController extends WindowTilePane implements Initializab
         interactiveWindow.getStylesheets().add("com/gb/style.css");
         fileChooser = new FileChooser();
         directoryChooser = new DirectoryChooser();
-        net = new NettyNet(this::readCommand);
+        net = new NettyNet(this::readCommand, animatedProgress);
     }
 
     public void sendMessages(Command command) {

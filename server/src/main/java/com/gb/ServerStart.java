@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServerStart {
 
+    static final int MAX_OBJ_SIZE = 1024 * 1024 * 100;
+
     public static void main(String[] args) {
         OperatorBD.clearAllConnects();
         EventLoopGroup auth = new NioEventLoopGroup(1);
@@ -29,7 +31,7 @@ public class ServerStart {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(
-                                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
 //                                    new CloudServerHandler()
                                     new CloudServerHandlerDB()
