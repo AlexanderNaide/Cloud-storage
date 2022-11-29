@@ -1,6 +1,8 @@
 package com.gb.views;
 
 import com.gb.classes.MyDir.MyDirectory;
+import com.gb.views.ico.Ico;
+import com.gb.views.ico.icoCatalog.IconVer1;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

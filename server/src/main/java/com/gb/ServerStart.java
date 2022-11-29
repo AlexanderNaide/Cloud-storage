@@ -1,6 +1,7 @@
 package com.gb;
 
 import com.gb.handlers.CloudServerHandler;
+import com.gb.handlers.CloudServerHandlerDB;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -15,7 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ServerStart {
+
+    static final int MAX_OBJ_SIZE = 1024 * 1024 * 100;
+
     public static void main(String[] args) {
+        OperatorBD.clearAllConnects();
         EventLoopGroup auth = new NioEventLoopGroup(1);
         EventLoopGroup worker = new NioEventLoopGroup();
         try{
@@ -26,18 +31,20 @@ public class ServerStart {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(
-                                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new CloudServerHandler()
+//                                    new CloudServerHandler()
+                                    new CloudServerHandlerDB()
                             );
                         }
                     }).bind(6830).sync();
             log.debug("Server started...");
             future.channel().closeFuture().sync();
-
         } catch (InterruptedException e) {
+            System.err.println("Что-то случилось");
             log.error("e=", e);
         } finally {
+            OperatorBD.clearAllConnects();
             auth.shutdownGracefully();
             worker.shutdownGracefully();
         }

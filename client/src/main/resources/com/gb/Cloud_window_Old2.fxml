@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane fx:id="HomeWindow" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gb.controllers.CloudWindowController">
+    <VBox fx:id="VBoxHomeWindow" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Hyperlink fx:id="logOutPanel" alignment="CENTER_RIGHT" onAction="#Logout" prefHeight="20.0" prefWidth="541.0" text="Logout" visible="false">
+         <padding>
+            <Insets right="5.0" />
+         </padding>
+      </Hyperlink>
+        <ButtonBar fx:id="buttonBar" prefHeight="40.0" prefWidth="200.0" visible="false">
+            <buttons>
+                <Button layoutX="285.0" layoutY="18.0" mnemonicParsing="false" onAction="#UpdateList" text="Update list" />
+                <Button layoutX="285.0" layoutY="18.0" mnemonicParsing="false" onAction="#RenameButton" text="Rename" />
+                <Button layoutX="285.0" layoutY="18.0" mnemonicParsing="false" onAction="#AddFile" text="Add File" />
+                <Button layoutX="285.0" layoutY="18.0" mnemonicParsing="false" onAction="#AddDirectory" text="Add Dir" />
+                <Button layoutX="285.0" layoutY="18.0" mnemonicParsing="false" onAction="#DownloadButton" text="Download" />
+                <Button layoutX="285.0" layoutY="18.0" mnemonicParsing="false" onAction="#DeleteButton" text="Delete" />
+            </buttons>
+           <padding>
+               <Insets left="5.0" right="5.0" />
+           </padding>
+        </ButtonBar>
+        <Pane fx:id="loginPane" prefHeight="569.0" prefWidth="530.0">
+            <VBox prefHeight="565.0" prefWidth="530.0">
+                <Label alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" prefHeight="182.0" prefWidth="530.0" text="Login" textAlignment="CENTER">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                    <font>
+                        <Font name="Broadway" size="18.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="loginField" prefHeight="25.0" prefWidth="420.0">
+                    <VBox.margin>
+                        <Insets left="100.0" right="100.0" />
+                    </VBox.margin>
+                </TextField>
+                <Label alignment="BOTTOM_CENTER" prefHeight="44.0" prefWidth="530.0" text="Password">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                    <font>
+                        <Font name="Broadway" size="18.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="passField" VBox.vgrow="NEVER">
+                    <VBox.margin>
+                        <Insets left="100.0" right="100.0" />
+                    </VBox.margin>
+                </TextField>
+                <Button contentDisplay="RIGHT" mnemonicParsing="false" onAction="#Login" prefHeight="45.0" prefWidth="210.0" text="Connect">
+                    <VBox.margin>
+                        <Insets left="160.0" right="160.0" top="10.0" />
+                    </VBox.margin>
+                    <font>
+                        <Font name="Broadway" size="14.0" />
+                    </font>
+                </Button>
+            <Hyperlink alignment="CENTER" contentDisplay="CENTER" onAction="#Registration" prefHeight="26.0" prefWidth="210.0" text="Registration" textAlignment="CENTER">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="160.0" right="160.0" />
+               </VBox.margin>
+            </Hyperlink>
+            </VBox>
+        </Pane>
+    </VBox>
+</AnchorPane>

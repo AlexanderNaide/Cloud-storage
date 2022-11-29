@@ -4,42 +4,44 @@ import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.command.NewCatalog;
 import com.gb.classes.command.RenameFile;
 import com.gb.controllers.CloudWindowController;
+import com.gb.views.ico.Ico;
+import com.gb.views.ico.icoCatalog.IconVer1;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.control.skin.TreeCellSkin;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.StringConverter;
 
-import java.awt.*;
 import java.io.File;
-
-import static javafx.scene.control.TreeView.editAnyEvent;
-import static javafx.scene.control.TreeView.editCancelEvent;
 
 public class WindowTreeView {
 
+
+    @FXML
+    protected Pane loginPane;
     protected CloudWindowController controller;
     public VBox VBoxHomeWindow;
     protected TreeView <UserItem> treeView;
+    @FXML
+    public ButtonBar buttonBar;
+    @FXML
+    public Hyperlink logOutPanel;
     protected Ico ico;
     public void initialize(CloudWindowController controller) {
 
         this.controller = controller;
         treeView = new TreeView<UserItem>();
-//        treeView.setShowRoot(false);  // скрывает корневой каталог
-        this.VBoxHomeWindow.getChildren().add(treeView);
-        VBox.setVgrow(treeView, Priority.ALWAYS);
+        treeView.setVisible(false);
+//        treeView.setShowRoot(false);  // СЃРєСЂС‹РІР°РµС‚ РєРѕСЂРЅРµРІРѕР№ РєР°С‚Р°Р»РѕРі
+//        this.VBoxHomeWindow.getChildren().add(treeView);
+//        VBox.setVgrow(treeView, Priority.ALWAYS);
         treeView.setPadding(new Insets(5.0));
+        this.VBoxHomeWindow.getChildren().add(treeView);
         ico = new IconVer1();
         treeView.setRoot(new TreeItem<>(new UserItem("", true, "Home"), new ImageView(ico.getIco("home"))));
 
@@ -125,7 +127,7 @@ public class WindowTreeView {
         treeView.getRoot().setExpanded(true);
     }
         protected String readTemporaryName(TreeItem<UserItem> item){
-            String name = "Новая папка";
+            String name = "РќРѕРІР°СЏ РїР°РїРєР°";
             String newName = name;
             boolean x = false;
             int n = 2;
@@ -171,11 +173,43 @@ public class WindowTreeView {
 //        treeView.setEditable(false);
     }
 
-    public void updateViewNew(MyDirectory myDirectory) {
+    public void windowCatalogIn(){
+        loginPane.setVisible(false);
+        loginPane.setPrefHeight(0);
+        Platform.runLater(() -> {
+//            this.VBoxHomeWindow.getChildren().add(treeView);
+            logOutPanel.setVisible(true);
+            buttonBar.setVisible(true);
+        });
+        VBox.setVgrow(treeView, Priority.ALWAYS);
+        treeView.setVisible(true);
+    }
 
-//        System.out.println("Обновляемся");
+    public void windowCatalogOut(){
+
+        Platform.runLater(() -> {
+//            this.VBoxHomeWindow.getChildren().add(treeView);
+            treeView.setVisible(false);
+            logOutPanel.setVisible(false);
+            buttonBar.setVisible(false);
+            loginPane.setVisible(true);
+            loginPane.setPrefHeight(569);
+        });
+//        VBox.setVgrow(treeView, Priority.ALWAYS);
+    }
+
+
+
+    public void updateViewNew(MyDirectory myDirectory) {
+        if (loginPane.isVisible()){
+            windowCatalogIn();
+        }
+
+//        System.out.println("РћР±РЅРѕРІР»СЏРµРјСЃСЏ");
 
         treeView.getRoot().getValue().setFile(myDirectory.getCatalog());
+        treeView.getRoot().getValue().setOwner(myDirectory.getCatalog().getName());
+
         TreeItem<UserItem> newUserCatalog = new TreeItem<>(new UserItem(myDirectory.getCatalog(), true));
         newUserCatalog.getChildren().addAll(updateViewCat(myDirectory).getChildren());
         updateExpanded(newUserCatalog.getChildren(), treeView.getRoot().getChildren());

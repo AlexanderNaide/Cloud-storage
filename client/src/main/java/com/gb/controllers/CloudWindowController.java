@@ -1,30 +1,29 @@
 package com.gb.controllers;
 
+import com.gb.classes.MyDir.CloudCatalog;
 import com.gb.classes.MyDir.MyDirectory;
-import com.gb.classes.MyDir.NotDirectoryException;
 import com.gb.classes.command.*;
 import com.gb.classes.Command;
 import com.gb.net.NettyNet;
 import com.gb.views.*;
-import io.netty.channel.ChannelHandlerContext;
-import javafx.collections.ObservableList;
+import com.gb.views.ico.icoCatalog.Large;
+import com.gb.views.ico.icoCatalog.TileElement;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
+import javafx.scene.control.*;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
-
-import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,43 +32,22 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 @Slf4j
-public class CloudWindowController extends WindowTreeView implements Initializable {
-    public AnchorPane HomeWindow;
-
-//    public WindowTreeView treeView;
-    public TextField interText;
-
-//    private Desktop desktop;
-
+public class CloudWindowController extends WindowTilePane implements Initializable {
+    public TextField loginField;
+    public TextField passField;
+    public Label logout;
+    public Pane animatedProgress;
     private FileChooser fileChooser;
-
     private DirectoryChooser directoryChooser;
-
-//    private Net net;
-    private NettyNet net;
-
-
-    /**
-     * @param location
-     * The location used to resolve relative paths for the root object, or
-     * {@code null} if the location is not known.
-     *
-     * @param resources
-     * The resources used to localize the root object, or {@code null} if
-     * the root object was not localized.
-     */
-
-
-// TODO: 014 14.11.22 Необходимо добавить всплывающие сообщения: если файл удаляется, если удаляется дирректория, если скачиваемый файл уже есть, если качается дирректория
+    private static NettyNet net;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(this);
+        interactiveWindow.getStylesheets().add("com/gb/style.css");
         fileChooser = new FileChooser();
         directoryChooser = new DirectoryChooser();
-//        desktop = Desktop.getDesktop();
-
-        net = new NettyNet(this::readCommand);
+        net = new NettyNet(this::readCommand, animatedProgress);
     }
 
     public void sendMessages(Command command) {
@@ -78,21 +56,19 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
     private void readCommand(Command command) {
 
-//        System.out.println(" Явообще что-то получаю? ");
-
         log.debug("Received: {}", command);
-        if (command != null){
+        if (command != null) {
             String com = command.getName();
             switch (com) {
                 case "UpdateCatalog" -> System.out.println("Update catalog");
                 case "Test" -> System.out.println("Test");
                 case "myDirectory" -> updateViewNew((MyDirectory) command);
+                case "cloudCatalog" -> updateCatalog((CloudCatalog) command);
                 case "newFile" -> createNewFile((NewFile) command);
+                case "message" -> serverMessage((MyMessage) command);
+                case "userDisconnect" -> windowLogin();
             }
         }
-
-
-
 
 /*        Platform.runLater(() -> {
             statuses.getItems().add(message);
@@ -106,7 +82,7 @@ public class CloudWindowController extends WindowTreeView implements Initializab
         */
     }
 
-    public void createNewFile(NewFile newFile){
+    public void createNewFile(NewFile newFile) {
         try {
             Path createFile = Paths.get(newFile.getFile().getPath());
             Files.write(createFile, newFile.getDataByte(), StandardOpenOption.CREATE);
@@ -122,85 +98,144 @@ public class CloudWindowController extends WindowTreeView implements Initializab
 
     public void AddDirectory(ActionEvent actionEvent) {
 
-        TreeItem<UserItem> parentItem = getParentItem();
-        TreeItem<UserItem> newItem = new TreeItem<>();
-//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
-        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
-        newItem.setGraphic(new ImageView(ico.getIco("cat")));
-        parentItem.getChildren().add(0, newItem);
-        parentItem.setExpanded(true);
-        setEditing(newItem);
-
-
-//        treeView.requestFocus();
-//        treeView.getFocusModel().focus(0);
-//        treeView.layout();
-//        treeView.edit(newItem);
-//        treeView.setEditable(true);
+        TileElement newElement = new Large(new ImageView(ico.getIco("cat")), new File(currentDir + "\\" + readTemporaryName()), controller::sendMessages);
+        workingWindow.getChildren().add(newElement);
+        newElement.editing();
 
     }
 
+    public void rename(ActionEvent actionEvent) {
 
-    public void TextInsered(ActionEvent actionEvent) {
+        List<TileElement> list = getSelected();
+        TileElement renElement = list.get(0);
+
+        if(renElement != null){
+            renElement.rename();
+        }
+
     }
 
     public void DeleteButton(ActionEvent actionEvent) {
-        TreeItem<UserItem> item = treeView.getFocusModel().getFocusedItem();
-        if (item != treeView.getRoot()){
-            File file = item.getValue().getFile();
-            DeleteFile del = new DeleteFile(file);
-            sendMessages(del);
+        StringBuilder delName = new StringBuilder();
+        List<TileElement> list = getSelected();
+        if (list.size() == 0){
+            return;
+        }else if (list.size() < 4){
+            for (TileElement element : list) {
+                Large l = (Large) element;
+                if (delName.length() == 0) {
+                    delName.append(l.getFile().getName());
+                } else {
+                    delName.append(", ").append(l.getFile().getName());
+                }
+            }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                Large l = (Large) list.get(i);
+                if (i == 0) {
+                    delName.append(l.getFile().getName());
+                } else {
+                    delName.append(", ").append(l.getFile().getName());
+                }
+            }
+            delName.append(" и др.");
         }
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Удалить " + delName.toString() + "?", ButtonType.CANCEL, ButtonType.YES);
+//            Alert alert = new Alert(Alert.AlertType.WARNING, new String(("Удалить " + delName + "?").getBytes(StandardCharsets.UTF_8)), ButtonType.CANCEL, ButtonType.OK);
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.YES) {
+            for (TileElement t : list) {
+                Large l = (Large) t;
+                DeleteFile del = new DeleteFile(l.getFile());
+                sendMessages(del);
+            }
+        }
+    }
+
+    public void serverMessage(MyMessage command) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING, command.getText(), ButtonType.OK);
+//            Alert alert = new Alert(Alert.AlertType.WARNING, answer, ButtonType.OK);
+//            Alert alert = new Alert(Alert.AlertType.WARNING, new String(command.getText().getBytes(StandardCharsets.UTF_8)), ButtonType.OK);
+            alert.showAndWait();
+        });
     }
 
     public void AddFile(ActionEvent actionEvent) throws IOException {
 /*
         Вот эта тема загружает Эксплорер в указанной папке
 
-        String onlyPath = "D:\\GAME OF Thrones";
+        String onlyPath = "D:\\";
         String completeCmd = "explorer.exe /select," + onlyPath;
         new ProcessBuilder(("explorer.exe " + completeCmd).split(" ")).start();
         */
 //        new ProcessBuilder("explorer.exe").start(); // а вот конкретно так стартует библиотека пользователя
 
 
-        List<File> files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
-        TreeItem<UserItem> parentItem = super.getParentItem();
-        parentItem.setExpanded(true);
-        for (File file : files) {
-            try {
-//                byte[] dataByte = Files.readAllBytes(Paths.get(file.getPath()));
-                byte[] dataByte = Files.readAllBytes(file.toPath());
-                String newFileName = parentItem.getValue().getFile().getPath() + "\\" + file.getName();
-                NewFile newFie = new NewFile(new File(newFileName), dataByte);
-                sendMessages(newFie);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        List<File> files = null;
+        files = fileChooser.showOpenMultipleDialog(HomeWindow.getScene().getWindow());
+        if (files != null) {
+            for (File file : files) {
+                try {
+                    byte[] dataByte = Files.readAllBytes(file.toPath());
+                    String newFileName = currentDir.getPath() + "\\" + file.getName();
+                    NewFile newFie = new NewFile(new File(newFileName), dataByte);
+                    sendMessages(newFie);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
 
     public void DownloadButton(ActionEvent actionEvent) {
         File dir = directoryChooser.showDialog(HomeWindow.getScene().getWindow());
-        ObservableList<TreeItem<UserItem>> list = treeView.getSelectionModel().getSelectedItems();
-        for (TreeItem<UserItem> userItemTreeItem : list) {
-            File file = userItemTreeItem.getValue().getFile();
+//        ObservableList<TreeItem<UserItem>> list = treeView.getSelectionModel().getSelectedItems();
+        List<TileElement> list = getSelected();
+
+//        for (TreeItem<UserItem> userItemTreeItem : list) {
+        for (TileElement element : list) {
+            File file = ((Large) element).getFile();
+//            File cfile = userItemTreeItem.getValue().getFile();
             sendMessages(new GetFile(file, dir.getPath()));
         }
     }
 
     public void RenameButton(ActionEvent actionEvent) {
-//        TreeItem<UserItem> parentItem = getParentItem();
-//        TreeItem<UserItem> newItem = new TreeItem<>();
-//        newItem.setValue(new UserItem(parentItem.getValue().getFile() + "\\",true, readTemporaryName(parentItem)));
-
-
         TreeItem<UserItem> newItem = treeView.getSelectionModel().getSelectedItem();
         newItem.getValue().renameStarted();
-//        newItem.setValue(new UserItem(new File(parentItem.getValue().getFile() + "\\" + readTemporaryName(parentItem)),true));
-//        newItem.setGraphic(new ImageView(ico.getIco("cat")));
-//        parentItem.getChildren().add(0, newItem);
-//        parentItem.setExpanded(true);
         setEditing(newItem);
+    }
+
+    public void Login(ActionEvent actionEvent) {
+
+        String login = loginField.getText();
+        String password = passField.getText();
+        if (login.isBlank() || password.isBlank()) {
+            return;
+        }
+        UserConnect userConnect = new UserConnect(login, password);
+        sendMessages(userConnect);
+
+    }
+
+    public void Registration(ActionEvent actionEvent) {
+
+        String login = loginField.getText();
+        String password = passField.getText();
+
+        if (login.isBlank() || password.isBlank()) {
+            return;
+        }
+
+        UserCreate userCreate = new UserCreate(login, password);
+        sendMessages(userCreate);
+
+    }
+
+
+    public void Logout(MouseEvent mouseEvent) {
+        windowLogin();
+        sendMessages(new UserDisconnect());
     }
 }

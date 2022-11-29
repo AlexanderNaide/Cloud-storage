@@ -1,12 +1,10 @@
-package com.gb.views;
+package com.gb.views.ico.icoCatalog;
 
 
+import com.gb.views.ico.Ico;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
-import java.util.Objects;
-
-public class IconVer1 implements Ico{
+public class IconVer1 implements Ico {
     private final Image home;
     private final Image file;
     private final Image saveFile;

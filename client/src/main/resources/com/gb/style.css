@@ -1,0 +1,92 @@
+/*
+“аблица стилей "по умолчанию" находитс€ в
+                              jfxrt.jar\com\sun\javafx\scene\control\skin\modena\modena.css */
+
+.label {
+}
+
+.button {
+/*    -fx-background-color: linear-gradient(#328BDB 0.0%, #207BCF 25.0%, #1973C9 75.0%, #0A65BF 100.0%);
+    -fx-text-fill: white;
+    -fx-background-radius: 2;*/
+    -fx-border-style: solid;
+    /*-fx-border-style: dotted dashed solid double;*/
+    -fx-background-color: none;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-border-color: grey;
+}
+
+.interface-button {
+/*    -fx-padding: 3;
+    -fx-cell-size: 30, 30;
+    -fx-background-size: 30, 30;*/
+    -fx-border-style: solid;
+    -fx-background-color: none;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-border-color: grey;
+}
+
+.tooltip{
+    -fx-font-size: 16;
+}
+
+.large {
+    /*-fx-background-color: none;*/
+    /*-fx-border-radius: 10;*/
+    /*-fx-border-style: solid;*/
+    /*-fx-border-color: grey;*/
+}
+
+/*
+.large:focused {
+    -fx-background-color: none;
+    -fx-border-radius: 10;
+    -fx-border-style: solid;
+    -fx-border-color: grey;
+}
+*/
+
+.tile-element:focus {
+    -fx-background-color: none;
+    -fx-border-radius: 10;
+    -fx-border-style: solid;
+    -fx-border-color: grey;
+}
+
+#interactiveWindow {
+    /*-fx-background-color: linear-gradient(#90e0f2 0.0%, whitesmoke 100.0%);*/
+    -fx-background-color: linear-gradient(to right, #90e0f2 0.0%, whitesmoke 100.0%);
+}
+
+#quickMenu {
+    /*-fx-background-color: linear-gradient(#90e0f2 0.0%, whitesmoke 100.0%);*/
+    -fx-background-color: linear-gradient(to right, #90e0f2 0.0%, whitesmoke 100.0%);
+}
+
+#buttonBar {
+    /*-fx-background-color: linear-gradient(#90e0f2 0.0%, whitesmoke 100.0%);*/
+    -fx-background-color: linear-gradient(to right, #90e0f2 0.0%, whitesmoke 100.0%);
+}
+
+#workingWindow {
+    /*-fx-background-color: linear-gradient(#90e0f2 0.0%, whitesmoke 100.0%);*/
+    -fx-background-image: url("../../ico2/cloud.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: right 5% bottom 10%;
+    -fx-background-color: radial-gradient(center 90% 90% , radius 140%, #90e0f2, whitesmoke);
+}
+
+#loginWindow {
+    -fx-background-color: radial-gradient(center 90% 90% , radius 140%, #90e0f2, whitesmoke);
+}
+
+#logout{
+    -fx-text-fill: #0095c8;
+}
+
+#logout:hover{
+    -fx-text-fill: #0095c8;
+    -fx-underline: true;
+}

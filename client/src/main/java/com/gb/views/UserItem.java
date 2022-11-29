@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 public class UserItem {
 
-    private String owner = "user1";
+    private String owner;
     private File file;
     private File localFile;
     private final boolean isDir;
@@ -27,6 +27,10 @@ public class UserItem {
 
     public void renameFinished() {
         this.renameFile = null;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public UserItem(File file, boolean isDir) {

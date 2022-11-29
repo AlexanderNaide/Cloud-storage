@@ -11,6 +11,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import javafx.scene.layout.Pane;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -18,7 +19,9 @@ public class NettyNet {
     private SocketChannel channel;
     private EventLoopGroup group;
 
-    public NettyNet(MessageReceived received) {
+    static final int MAX_OBJ_SIZE = 1024 * 1024 * 100;
+
+    public NettyNet(MessageReceived received, Pane animatedProgress) {
         new Thread(() ->{
             group = new NioEventLoopGroup();
             try{
@@ -31,7 +34,9 @@ public class NettyNet {
                                 channel = socketChannel;
                                 socketChannel.pipeline().addLast(
                                         new ObjectEncoder(),
-                                        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                                        new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
+//                                        new DownObserver(animatedProgress),
+//                                        new UpObserver(animatedProgress),
                                         new ClientHandler(received)
                                 );
                             }

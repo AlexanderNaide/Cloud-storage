@@ -1,6 +1,6 @@
 package com.gb.handlers;
 
-import com.gb.classes.MyMessage;
+import com.gb.classes.command.MyMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;

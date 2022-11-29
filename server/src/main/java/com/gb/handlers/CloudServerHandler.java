@@ -1,5 +1,6 @@
 package com.gb.handlers;
 
+import com.gb.OperatorBD;
 import com.gb.classes.Command;
 import com.gb.classes.MyDir.MyDirectory;
 import com.gb.classes.MyDir.NotDirectoryException;
@@ -50,7 +51,7 @@ public class CloudServerHandler extends SimpleChannelInboundHandler<Command> {
     }
 
     public void updateCatalog(ChannelHandlerContext channel) throws NotDirectoryException {
-        Command answer = new MyDirectory(Paths.get("Root/user1").toFile());
+        Command answer = new MyDirectory("Root/", "log1");
         channel.writeAndFlush(answer);
     }
 

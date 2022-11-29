@@ -1,7 +1,6 @@
 package com.gb;
 
 import com.gb.classes.Command;
-import com.gb.classes.MyMessage;
 import com.gb.classes.command.UpdateCatalog;
 import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
 import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
