@@ -31,7 +31,7 @@ public class DownObserver extends ChannelInboundHandlerAdapter {
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         super.channelReadComplete(ctx);
 
-        animatedProgress.getChildren().add(new ImageView(new Image("/desk/download.gif", 36, 36, false, false)));
+//        animatedProgress.getChildren().add(new ImageView(new Image("/desk/download.gif", 36, 36, false, false)));
         System.out.println("Закончили читать");
     }
 }

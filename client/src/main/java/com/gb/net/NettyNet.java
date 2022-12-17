@@ -35,8 +35,8 @@ public class NettyNet {
                                 socketChannel.pipeline().addLast(
                                         new ObjectEncoder(),
                                         new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
-//                                        new DownObserver(animatedProgress),
-//                                        new UpObserver(animatedProgress),
+                                        new DownObserver(animatedProgress),
+                                        new UpObserver(animatedProgress),
                                         new ClientHandler(received)
                                 );
                             }
